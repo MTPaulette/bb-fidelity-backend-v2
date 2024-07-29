@@ -33,8 +33,16 @@ class PasswordController extends Controller
 
             $user->password = $request->password;
             $user->update();
+
+            if($user->role_id == 1) {
+                $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+            } else {
+                $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
+            }
+
             $response = [
                 'user' => $user,
+                'token' => $token,
                 'message' => "Password Updated Successfully"
             ];
             return response($response, 201);
