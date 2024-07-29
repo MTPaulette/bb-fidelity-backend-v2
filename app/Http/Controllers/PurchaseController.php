@@ -50,6 +50,11 @@ class PurchaseController extends Controller
         $new_balance = 0;
 
         try {
+            if($user->role_id == 1) {
+                return response([
+                    'errors' => "Only client can make purchase. not Admin",
+                ], 422);
+            }
             if($by_cash) {
                 $new_balance = $user->balance + $service->point;
                 $user->services()->attach($service, [

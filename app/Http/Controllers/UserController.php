@@ -46,43 +46,4 @@ class UserController extends Controller
         $recent_user_id = User::orderByDesc('id')->get('id')->first();
         return response($recent_user_id, 201);
     }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    
-    public function update(Request $request)
-    {
-        //$user = User::find($request->id);
-        $user = $request->user();
-
-        if($request->balance) {
-            if($request->malus) {
-                if($user->balance == 0) {
-                    $response = [
-                        'errors' => "you can't remove balance to user with zero piont.",
-                    ];
-                    return response($response, 422);
-                }
-                if($user->balance < $request->malus) {
-                    $user->balance = 0;
-                }else {
-                    $user->balance = $user->balance - $request->balance;
-                }
-            }else {
-            $user->balance = $user->balance + $request->balance;
-            }
-        }
-        $user->update();
-        $response = [
-            'user' => $user,
-            'message' => "user's balance updated",
-        ];
-
-        return response($response, 201);
-    }
 }

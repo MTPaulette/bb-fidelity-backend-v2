@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -53,14 +52,6 @@ class UserAccountController extends Controller
     }
 
     public function login(Request $request) {
-
-        // return response("blablbla", 201);
-        
-        // $request->validate([
-        //     'email' => 'required|string|email',
-        //     'password' => 'required|string'
-        // ]);
-
         $validator = Validator::make($request->all(),[
             'email' => 'required|email|',
             'password' => 'required|string|min:6',
@@ -80,7 +71,7 @@ class UserAccountController extends Controller
             ]);
         }
  
-        $user->tokens()->delete();
+        // $user->tokens()->delete();
         if($user->role_id == 1) {
             $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
         } else {
