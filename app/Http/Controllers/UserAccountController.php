@@ -38,9 +38,9 @@ class UserAccountController extends Controller
             $user->role_id = 1;
             $user->save();
 
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin'], now()->addMonth())->plainTextToken;
         } else {
-            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'], now()->addMonth())->plainTextToken;
         }
 
         $response = [
@@ -73,9 +73,9 @@ class UserAccountController extends Controller
  
         // $user->tokens()->delete();
         if($user->role_id == 1) {
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin'], now()->addMonth())->plainTextToken;
         } else {
-            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'], now()->addMonth())->plainTextToken;
         }
 
         $response = [
