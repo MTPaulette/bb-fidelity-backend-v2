@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class ServiceController extends Controller
 {
@@ -64,10 +65,17 @@ class ServiceController extends Controller
     public function show($id)
     {
         $service = Service::find($id);
-        $response = [
-            'service' => $service,
-        ];
-        return response($response, 201);
+        if($service) {
+            $response = [
+                'service' => $service,
+            ];
+            return response($response, 201);
+        } else {
+            $response = [
+                'service' => 'service not found',
+            ];
+            return response($response, 404);
+        }
     }
 
     /**
@@ -131,11 +139,41 @@ class ServiceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Service  $service
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Service $service)
+    public function destroy(Request $request)
     {
-        //
+        $user = $request->user();
+        if (! Hash::check($request->password, $user->password)) {
+            $response = [
+                'password' => 'Wrong password.'
+            ];
+            return response($response, 422);
+        }
+ 
+        $service = Service::find($request->id);
+        if($service) {
+            // we can't delete service which have already been buy
+            if( $service->users()->exists() ) {
+                $response = [
+                    'error' => 'This service has already been purchased. You can not delete it',
+                ];
+                return response($response, 422);
+            } else {
+                $service->delete();
+                $response = [
+                    'message' => "Service successfully deleted",
+                ];
+                return response($response, 201);
+            }
+        } else {
+            $response = [
+                'errors' => 'Service not found',
+            ];
+            return response($response, 404);
+        }
+
+
     }
 }

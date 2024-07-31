@@ -53,6 +53,7 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
     Route::get('/recent/service', [ServiceController::class, 'recent'])->name('service.recent');
     Route::post("/service/store",[ServiceController::class, "store"])->name("service.store");
     Route::put('/service/{id}/update', [ServiceController::class, 'update'])->name('service.update');
+    Route::put('/service/{id}/delete', [ServiceController::class, 'destroy'])->name('service.delete');
     
     /* purchase's routes */
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
