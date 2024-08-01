@@ -20,7 +20,8 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Service::class)
                     ->onDelete('cascade');
             $table->boolean('by_cash')->default(1);
-            $table->unsignedInteger('bonus_point')->default(0);
+            $table->float('credit')->default(0);
+            $table->float('debit')->default(0);
             $table->unsignedInteger('user_balance')->default(0);
             
             $table->unsignedBigInteger('admin_id')->nullable();

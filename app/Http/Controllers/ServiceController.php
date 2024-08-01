@@ -32,8 +32,9 @@ class ServiceController extends Controller
     {
         $validator = Validator::make($request->all(),[
             'name' => 'required|string|unique:services',
-            'price' => 'required|integer',
-            'point' => 'required|integer',
+            'price' => 'required',
+            'credit' => 'required',
+            'debit' => 'required',
             'validity' => 'required',
             'description' => 'required|string',
         ]);
@@ -114,9 +115,11 @@ class ServiceController extends Controller
         if($request->price) {
             $service->price = $request->price;
         }
-
-        if($request->point) {
-            $service->point = $request->point;
+        if($request->credit) {
+            $service->credit = $request->credit;
+        }
+        if($request->debit) {
+            $service->debit = $request->debit;
         }
 
         if($request->validity) {

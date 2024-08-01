@@ -18,7 +18,8 @@ class PurchaseFactory extends Factory
     {
         return [
             'by_cash' => fake()->boolean(),
-            'bonus_point' => fake()->numberBetween(0, 50000),
+            'credit' => fake()->numberBetween(0, 15),
+            'debit' => fake()->numberBetween(0, 15),
             'user_balance' => fake()->numberBetween(0, 150000),
             //'admin_id' => 1
         ];

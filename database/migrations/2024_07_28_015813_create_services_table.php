@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedInteger('price');
-            $table->unsignedInteger('point')->default(0);
+            $table->float('credit')->default(0);
+            $table->float('debit')->default(0);
             $table->string('validity')->default('1 hour');
             $table->text('description')->nullable();
             $table->foreignIdFor(\App\Models\User::class)->default(1);

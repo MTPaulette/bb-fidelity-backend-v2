@@ -56,15 +56,16 @@ class PurchaseController extends Controller
                 ], 422);
             }
             if($by_cash) {
-                $new_balance = $user->balance + $service->point;
+                $new_balance = $user->balance + $service->credit;
                 $user->services()->attach($service, [
                     'by_cash' => true, 
-                    'bonus_point' => $service->point, 
+                    'credit ' => $service->credit, 
+                    'debit ' => 0, 
                     'user_balance' => $new_balance, 
                     'admin_id' => $admin_id
                 ]);
             } else {
-                $new_balance = $user->balance - $service->price;
+                $new_balance = $user->balance - $service->debit;
 
                 // check if user cant pay service with his balance
                 if($new_balance < 0) {
@@ -74,7 +75,8 @@ class PurchaseController extends Controller
                 } else {
                     $user->services()->attach($service, [
                         'by_cash' => false, 
-                        'bonus_point' => 0, 
+                        'credit' => 0,
+                        'debit ' => $service->debit, 
                         'user_balance' => $new_balance, 
                         'admin_id' => $admin_id
                     ]);
@@ -125,6 +127,7 @@ class PurchaseController extends Controller
     public function allServicesOfUser($user_id)
     {
         $user = User::find($user_id);
+        // return $user;
         if($user->services()->exists()) {
             $user_services = $user->services()->orderBy('created_at', 'desc')->get();
 

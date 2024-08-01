@@ -11,7 +11,8 @@ class Purchase extends Pivot
     use HasFactory;
     protected $fillable = [
         'by_cash',
-        'bonus_point',
+        'credit',
+        'debit',
         'user_balance',
         'admin_id'
     ];
