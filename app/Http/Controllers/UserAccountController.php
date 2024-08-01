@@ -38,9 +38,9 @@ class UserAccountController extends Controller
             $user->role_id = 1;
             $user->save();
 
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin'], now()->addMonth())->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
         } else {
-            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'], now()->addMonth())->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
         }
 
         $response = [
@@ -73,9 +73,9 @@ class UserAccountController extends Controller
  
         // $user->tokens()->delete();
         if($user->role_id == 1) {
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin'], now()->addMonth())->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
         } else {
-            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'], now()->addMonth())->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
         }
 
         $response = [
@@ -84,20 +84,6 @@ class UserAccountController extends Controller
         ];
 
         return response($response, 201);
-        
-        /*
-            if(!Auth::attempt($request->validate([
-                'email' => 'required|string|email',
-                'password' => 'required|string'
-            ]), true)) {
-                throw ValidationException::withMessages([
-                    'email' => 'Auth failed. Email not found or incorrect password'
-                ]);
-                return response([
-                    'message' => ['These credentials do not match our records.']
-                ], 422);
-            }
-        */
     }
 
     /**
