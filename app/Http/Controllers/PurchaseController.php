@@ -125,20 +125,27 @@ class PurchaseController extends Controller
     public function allServicesOfUser($user_id)
     {
         $user = User::find($user_id);
-        if($user->services()->exists()) {
-            $user_services = $user->services()->orderBy('created_at', 'desc')->get();
+        if($user) {
+            if($user->services()->exists()) {
+                $user_services = $user->services()->orderBy('created_at', 'desc')->get();
 
-            foreach ($user_services as $s) {
-                $s["user_name"] = $user->name;
+                foreach ($user_services as $s) {
+                    $s["user_name"] = $user->name;
+                }
+                $response = [
+                    'services' => (Object) $user_services,
+                ];
+                return response($response, 201);
+            } else {
+                return response([
+                    'errors' => 'This user has not yet made a purchase of services.',
+                ], 422);
             }
-            $response = [
-                'services' => (Object) $user_services,
-            ];
-            return response($response, 201);
         } else {
-            return response([
-                'errors' => 'This user has not yet made a purchase of services.',
-            ], 422);
+            $response = [
+                'errors' => 'User not found',
+            ];
+            return response($response, 404);
         }
     }
 
@@ -151,17 +158,24 @@ class PurchaseController extends Controller
     public function allUsersOfService($service_id)
     {
         $service = Service::find($service_id);
-        if( $service->users()->exists() ) {
-            $service_users = $service->users()->orderBy('created_at', 'desc')->get();
-            $response = [
-                'service' => $service,
-                'users' => $service_users,
-            ];
-            return response($response, 201);
+        if($service) {
+            if( $service->users()->exists() ) {
+                $service_users = $service->users()->orderBy('created_at', 'desc')->get();
+                $response = [
+                    'service' => $service,
+                    'users' => $service_users,
+                ];
+                return response($response, 201);
+            } else {
+                return response([
+                    'errors' => 'This service has not been purchased by any user.',
+                ], 422);
+            }
         } else {
-            return response([
-                'errors' => 'This service has not been purchased by any user.',
-            ], 422);
+            $response = [
+                'errors' => 'Service not found',
+            ];
+            return response($response, 404);
         }
     }
 }

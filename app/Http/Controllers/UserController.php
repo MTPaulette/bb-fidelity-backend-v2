@@ -30,10 +30,17 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        $response = [
-            'user' => $user,
-        ];
-        return response($response, 201);
+        if($user) {
+            $response = [
+                'user' => $user,
+            ];
+            return response($response, 201);
+        } else {
+            $response = [
+                'errors' => 'User not found',
+            ];
+            return response($response, 404);
+        }
     }
 
     /**
