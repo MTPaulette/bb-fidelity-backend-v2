@@ -156,9 +156,12 @@ class PurchaseController extends Controller
         $service = Service::find($service_id);
         if( $service->users()->exists() ) {
             $service_users = $service->users()->orderBy('created_at', 'desc')->get();
+            
+            foreach ($service_users as $s) {
+                $s["service_name"] = $service->name;
+            }
             $response = [
-                'service' => $service,
-                'users' => $service_users,
+                'users' => (Object) $service_users,
             ];
             return response($response, 201);
         } else {
