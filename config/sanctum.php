@@ -46,7 +46,8 @@ return [
     |
     */
 
-    'expiration' => 15,
+    // 'expiration' => 15,
+    'expiration' => null,
     
 
     'prefix' => 'api',

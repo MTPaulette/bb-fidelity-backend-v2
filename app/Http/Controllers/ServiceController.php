@@ -36,6 +36,8 @@ class ServiceController extends Controller
             'credit' => 'required',
             'debit' => 'required',
             'validity' => 'required',
+            'agency' => 'required|string',
+            'service_type' => 'required|string',
             'description' => 'required|string',
         ]);
 
@@ -124,6 +126,14 @@ class ServiceController extends Controller
 
         if($request->validity) {
             $service->validity = $request->validity;
+        }
+
+        if($request->agency) {
+            $service->agency = $request->agency;
+        }
+
+        if($request->service_type) {
+            $service->service_type = $request->service_type;
         }
 
         if($request->description) {

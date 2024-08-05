@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
         /* user */
         \App\Models\User::factory()->create([
-            'name' => 'Brain booster',
+            'name' => 'booster',
             'email' => 'booster@test.fr',
             'role_id' => 1,
         ]);
@@ -38,8 +38,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\User::factory()->create([
-            'name' => 'Brain booster',
+            'name' => 'Brain',
             'email' => 'brain@test.fr',
+            'role_id' => 1,
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Brain booster',
+            'email' => 'brain-booster@test.fr',
             'role_id' => 3,
         ]);
        \App\Models\User::factory(10)->create();
@@ -49,7 +55,8 @@ class DatabaseSeeder extends Seeder
         * ==================== service ================
         */
         // \App\Models\Service::factory()->create([
-        $services_EM =[
+        $services=[
+            //Etoa-Meki service
             ['name'=>"Open space EM (hour)", 'price'=>"1000", 'credit'=>"1", 'debit'=>"5", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Etoa-Meki' ,'description'=>"Open space EM (hour)"],
             ['name'=>"Open space EM (day)", 'price'=>"5000", 'credit'=>"5", 'debit'=>"25", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Etoa-Meki' ,'description'=>"Open space EM (day)"],
 
@@ -67,9 +74,8 @@ class DatabaseSeeder extends Seeder
             ['name'=>"Maxi Bureau EM (hour)", 'price'=>"23", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Etoa-Meki' ,'description'=>"Maxi Bureau EM (hour)"],
             ['name'=>"Maxi Bureau EM (midday)", 'price'=>"23", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Etoa-Meki' ,'description'=>"Maxi Bureau EM (midday)"],
             ['name'=>"Maxi Bureau EM (day)", 'price'=>"23", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Etoa-Meki' ,'description'=>"Maxi Bureau EM (day)"],
-        ];
 
-        $services_EE =[
+            //Elig edzoa service
             ['name'=>"Open space EE (hour)", 'price'=>"1000", 'credit'=>"1", 'debit'=>"5", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Open space EE (hour)"],
             ['name'=>"Open space EE (day)", 'price'=>"5000", 'credit'=>"5", 'debit'=>"25", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Open space EE (day)"],
 
@@ -102,9 +108,8 @@ class DatabaseSeeder extends Seeder
             ['name'=>"Salle conference EE (hour)", 'price'=>"15000", 'credit'=>"4", 'debit'=>"30", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Salle conference EE (hour)"],
             ['name'=>"Salle conference EE (midday)", 'price'=>"50000", 'credit'=>"7", 'debit'=>"60", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Salle conference EE (midday)"],
             ['name'=>"Salle conference EE (day)", 'price'=>"23", 'credit'=>"15", 'debit'=>"100", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Salle conference EE (day)"],
-        ];
-
-        $services_Equipment =[
+           
+            // services_Equipment
             ['name'=>"Ordinateur / Ecran / Gros VP (hour)", 'price'=>"23", 'credit'=>"0", 'debit'=>"5", 'service_type'=>'equipment', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Ordinateur / Ecran / Gros VP (hour)"],
             ['name'=>"Ordinateur / Ecran / Gros VP (day)", 'price'=>"23", 'credit'=>"0", 'debit'=>"25", 'service_type'=>'equipment', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Ordinateur / Ecran / Gros VP (day)"],
 
@@ -115,9 +120,9 @@ class DatabaseSeeder extends Seeder
             ['name'=>"Casque (day)", 'price'=>"23", 'credit'=>"0", 'debit'=>"10", 'service_type'=>'equipment', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Casque (day)"],
         ];
 
-        \App\Models\Service::insert($services_EE);
-        \App\Models\Service::insert($services_EM);
-        \App\Models\Service::insert($services_Equipment);
+        foreach($services as $service) {
+            \App\Models\Service::create($service);
+        }
 
 
        /**
@@ -127,7 +132,7 @@ class DatabaseSeeder extends Seeder
         /* service user */
         $u10 = \App\Models\User::find(10);
         $u2 = \App\Models\User::find(2);
-        $u4 = \App\Models\User::find(4);
+        $u5 = \App\Models\User::find(5);
         $u7 = \App\Models\User::find(7);
         $u6 = \App\Models\User::find(6);
         $u11 = \App\Models\User::find(11);
@@ -143,7 +148,7 @@ class DatabaseSeeder extends Seeder
         $s13 = \App\Models\Service::find(13);
 
         $u10->services()->attach($s1, ['by_cash' => true, 'credit' => '1', 'debit' => '0', 'user_balance' => '400', 'admin_id' => '1']);
-        $u4->services()->attach($s1, ['by_cash' => true, 'credit' => '1', 'debit' => '0', 'user_balance' => '70', 'admin_id' => '1']);
+        $u5->services()->attach($s1, ['by_cash' => true, 'credit' => '1', 'debit' => '0', 'user_balance' => '70', 'admin_id' => '1']);
         $u10->services()->attach($s3, ['by_cash' => true, 'credit' => '1.5', 'debit' => '0', 'user_balance' => '130', 'admin_id' => '1']);
         $u2->services()->attach($s3, ['by_cash' => true, 'credit' => '1.5', 'debit' => '0', 'user_balance' => '130', 'admin_id' => '1']);
         $u2->services()->attach($s2, ['by_cash' => false, 'credit' => '0', 'debit' => '25', 'user_balance' => '800', 'admin_id' => '1']);
