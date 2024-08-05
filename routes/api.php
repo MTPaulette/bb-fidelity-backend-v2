@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 /* only admin route */
-Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/user/{id}', [UserController::class, 'show'])->name('user');

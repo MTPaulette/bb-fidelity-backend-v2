@@ -19,7 +19,11 @@ return new class extends Migration
             $table->unsignedInteger('price');
             $table->float('credit')->default(0);
             $table->float('debit')->default(0);
-            $table->string('validity')->default('1 hour');
+
+            $table->enum('validity', ['01 hour', 'midday', '01 day', '01 week', '01 month', 'pack', '01 year'])->default('01 hour');
+            $table->enum('service_type', ['service', 'space', 'equipment'])->default('space');
+            $table->enum('agency', ['Elig Essono', 'Etoa-Meki'])->default('Elig Essono');
+
             $table->text('description')->nullable();
             $table->foreignIdFor(\App\Models\User::class)->default(1);
             $table->timestamps();

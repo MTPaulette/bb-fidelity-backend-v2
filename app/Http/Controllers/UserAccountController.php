@@ -39,6 +39,11 @@ class UserAccountController extends Controller
             $user->save();
 
             $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+        } else if($request->role_id == 3) {
+            $user->role_id = 3;
+            $user->save();
+
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin', 'superadmin'])->plainTextToken;
         } else {
             $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
         }
@@ -74,6 +79,8 @@ class UserAccountController extends Controller
         // $user->tokens()->delete();
         if($user->role_id == 1) {
             $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+        } else if($user->role_id == 3) {
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin', 'superadmin'])->plainTextToken;
         } else {
             $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
         }

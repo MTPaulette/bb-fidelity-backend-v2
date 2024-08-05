@@ -21,7 +21,7 @@ class ServiceFactory extends Factory
             'price' => fake()->numberBetween(1000, 50000),
             'credit' => fake()->numberBetween(0, 15),
             'debit' => fake()->numberBetween(0, 15),
-            'validity' => fake()->randomElement(['1 hour', '1 week', '1 month']),
+            // 'validity' => fake()->randomElement(['1 hour', '1 week', '1 month']),
             'description' => fake()->paragraph(20)
         ];
     }

@@ -17,6 +17,8 @@ class Service extends Model
         'credit',
         'debit',
         'validity',
+        'service_type',
+        'agency',
         'description',
     ];
     
