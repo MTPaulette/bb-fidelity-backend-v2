@@ -12,12 +12,39 @@ class ServiceController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filters = $request->only([
+            'agency', 'validity', 'service_type', 'by', 'order'
+        ]);
+
+        $services = Service::filter($filters)->get();
+        
+        if(sizeof($services) == 0) {
+            return response([
+                'services' => $services,
+                'errors' => 'No result.',
+            ], 422);
+        } else {
+            $response = [
+                'services' => $services,
+            ];
+            return response($response, 201);
+        }
+
+    }
+
+    public function indexx(Request $request)
+    {
+        $filters = $request->only([
+            'agency', 'validity', 'service_type', 'by', 'order'
+        ]);
+
         $response = [
-            'services' => Service::orderBy('name', 'asc')->get(),
+            'services' => Service::filter($filters)->get(),
         ];
         return response($response, 201);
     }
@@ -36,8 +63,8 @@ class ServiceController extends Controller
             'credit' => 'required',
             'debit' => 'required',
             'validity' => 'required',
-            'agency' => 'required|string',
             'service_type' => 'required|string',
+            'agency' => 'required|string',
             'description' => 'required|string',
         ]);
 
