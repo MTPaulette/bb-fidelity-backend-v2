@@ -21,7 +21,6 @@ class PasswordController extends Controller
      */
     public function update(Request $request)
     {
-        //$user = User::find($request->id);
         $user = $request->user();
         $request->validate([
             'current_password' => ['required','string','min:6'],

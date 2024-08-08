@@ -6,7 +6,6 @@ use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cookie;
 
 class PurchaseController extends Controller
 {
@@ -44,7 +43,6 @@ class PurchaseController extends Controller
     {
         $service = Service::find($request->service_id);
         $user = User::find($request->user_id);
-        // $admin_id = $request->admin_id;
         $admin_id = $request->user()->id;
         $by_cash = $request->by_cash;
 
@@ -109,7 +107,6 @@ class PurchaseController extends Controller
         $purchase = DB::table('purchases')->select('user_id')->find($id);
         $user = User::find($purchase->user_id);
 
-
         $purchase = $user->services()->having('pivot_id', $id)->first();
 
         $response = [
@@ -128,7 +125,6 @@ class PurchaseController extends Controller
     public function allServicesOfUser($user_id)
     {
         $user = User::find($user_id);
-        // return $user;
         if($user->services()->exists()) {
             $user_services = $user->services()->orderBy('created_at', 'desc')->get();
 

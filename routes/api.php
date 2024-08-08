@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PurchaseController;
@@ -19,18 +18,12 @@ use App\Http\Controllers\ServiceController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 /* unauthenticated route */
 Route::post("/login",[UserAccountController::class, "login"])->name("login");
 Route::post("/register",[UserAccountController::class, "register"])->name("register");
 
 
 /* authenticated route: both user and admin */
-
-// Route::middleware(['auth:sanctum', 'abilities:view-historic,view-profile'])->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete("/logout",[UserAccountController::class, "logout"])->name("logout");
     Route::put('/profile', [UserAccountController::class, 'update'])->name('profile.update');
@@ -44,7 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])->name('users');
-    Route::get('/user/{id}', [UserController::class, 'show'])->name('user');
+    Route::get('/user/{id}', [UserController::class, 'show'])->name('user.show');
     Route::get('/recent/user', [UserController::class, 'recent'])->name('user.recent');
     
     /* service's route */

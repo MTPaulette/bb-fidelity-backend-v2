@@ -37,18 +37,6 @@ class ServiceController extends Controller
 
     }
 
-    public function indexx(Request $request)
-    {
-        $filters = $request->only([
-            'agency', 'validity', 'service_type', 'by', 'order'
-        ]);
-
-        $response = [
-            'services' => Service::filter($filters)->get(),
-        ];
-        return response($response, 201);
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -194,7 +182,7 @@ class ServiceController extends Controller
  
         $service = Service::find($request->id);
         if($service) {
-            // we can't delete service which have already been buy
+            // check if the service has already been buy
             if( $service->users()->exists() ) {
                 $response = [
                     'error' => 'This service has already been purchased. You can not delete it',

@@ -56,7 +56,8 @@ class UserAccountController extends Controller
         return response($response, 201);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(),[
             'email' => 'required|email|',
             'password' => 'required|string|min:6',
@@ -101,7 +102,6 @@ class UserAccountController extends Controller
      */
     public function update(Request $request)
     {
-        //$user = User::find($request->id);
         $user = $request->user();
 
         if($request->has('name') && isset($request->name)) {
@@ -127,12 +127,12 @@ class UserAccountController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $user = $request->user();
         $user->tokens()->delete();
         return response([
             'message' => 'Logout user',
         ], 201);
     }
-    
 }
