@@ -19,7 +19,7 @@ class PurchaseController extends Controller
         $all_purchases = array();
         $purchases = DB::table('purchases')->select('id', 'user_id')->orderByDesc('created_at')->get();
         foreach ($purchases as $p) {
-            $user = User::find($p->user_id);
+            $user = User::findOrFail($p->user_id);
 
             $purchase = $user->services()->having('pivot_id', $p->id)->first();
 
@@ -41,8 +41,8 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-        $service = Service::find($request->service_id);
-        $user = User::find($request->user_id);
+        $service = Service::findOrFail($request->service_id);
+        $user = User::findOrFail($request->user_id);
         $admin_id = $request->user()->id;
         $by_cash = $request->by_cash;
 
@@ -104,8 +104,8 @@ class PurchaseController extends Controller
      */
     public function show($id)
     {
-        $purchase = DB::table('purchases')->select('user_id')->find($id);
-        $user = User::find($purchase->user_id);
+        $purchase = DB::table('purchases')->select('user_id')->findOrFail($id);
+        $user = User::findOrFail($purchase->user_id);
 
         $purchase = $user->services()->having('pivot_id', $id)->first();
 
@@ -124,7 +124,7 @@ class PurchaseController extends Controller
      */
     public function allServicesOfUser($user_id)
     {
-        $user = User::find($user_id);
+        $user = User::findOrFail($user_id);
         if($user->services()->exists()) {
             $user_services = $user->services()->orderBy('created_at', 'desc')->get();
 
@@ -137,7 +137,7 @@ class PurchaseController extends Controller
             return response($response, 201);
         } else {
             return response([
-                'errors' => 'This user has not yet made a purchase of services.',
+                'errors' =>  'The user '.$user->name.' has not yet made a purchase of services.',
             ], 422);
         }
     }
@@ -150,7 +150,7 @@ class PurchaseController extends Controller
      */
     public function allUsersOfService($service_id)
     {
-        $service = Service::find($service_id);
+        $service = Service::findOrFail($service_id);
         if( $service->users()->exists() ) {
             $service_users = $service->users()->orderBy('created_at', 'desc')->get();
             
@@ -163,7 +163,7 @@ class PurchaseController extends Controller
             return response($response, 201);
         } else {
             return response([
-                'errors' => 'This service has not been purchased by any user.',
+                'errors' => 'The service '.$service->name.' has not been purchased by any user.',
             ], 422);
         }
     }

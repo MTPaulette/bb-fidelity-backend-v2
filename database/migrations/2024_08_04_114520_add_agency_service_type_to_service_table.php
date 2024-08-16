@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('services', function (Blueprint $table) {            
             $table->enum('service_type', ['service', 'space', 'equipment'])->default('space');
-            $table->enum('agency', ['Elig Essono', 'Etoa-Meki'])->default('Elig Essono');
+            $table->enum('agency', ['Elig Essono', 'Etoa-Meki'])->nullable();
         });
     }
 
@@ -26,9 +26,16 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->dropColumn('service_type');
-            $table->dropColumn('agency');
-        });
+        if(Schema::hasColumn('services', 'service_type')) {
+            Schema::table('services', function (Blueprint $table) {
+                $table->dropColumn('service_type');
+            });
+        }
+
+        if(Schema::hasColumn('services', 'agency')) {
+            Schema::table('services', function (Blueprint $table) {
+                $table->dropColumn('agency');
+            });
+        }
     }
 };

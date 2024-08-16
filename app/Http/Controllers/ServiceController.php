@@ -82,18 +82,11 @@ class ServiceController extends Controller
      */
     public function show($id)
     {
-        $service = Service::find($id);
-        if($service) {
-            $response = [
-                'service' => $service,
-            ];
-            return response($response, 201);
-        } else {
-            $response = [
-                'service' => 'service not found',
-            ];
-            return response($response, 404);
-        }
+        $service = Service::findOrFail($id);
+        $response = [
+            'service' => $service,
+        ];
+        return response($response, 201);
     }
 
     /**
@@ -115,7 +108,7 @@ class ServiceController extends Controller
      */
     public function update(Request $request)
     {
-        $service = Service::find($request->id);
+        $service = Service::findOrFail($request->id);
         $validator = Validator::make($request->all(),[
             'name' => 'required|string'
         ]);
@@ -185,7 +178,7 @@ class ServiceController extends Controller
             // check if the service has already been buy
             if( $service->users()->exists() ) {
                 $response = [
-                    'error' => 'This service has already been purchased. You can not delete it',
+                    'error' => 'The service '.$service->name.' has already been purchased. You can not delete it',
                 ];
                 return response($response, 422);
             } else {
