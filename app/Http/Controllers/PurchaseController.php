@@ -33,6 +33,25 @@ class PurchaseController extends Controller
         return response($response, 201); 
     }
 
+    public function indexx()
+    {
+        $all_purchases = array();
+        $purchases = DB::table('purchases')->select('id', 'user_id')->orderByDesc('created_at')->get();
+        foreach ($purchases as $p) {
+            $user = User::findOrFail($p->user_id);
+
+            $purchase = $user->services()->having('pivot_id', $p->id)->first();
+
+            $purchase["user_name"] = $user->name;
+            array_push($all_purchases, (Object) $purchase );
+        };
+
+        $response = [
+            'purchases' => $all_purchases,
+        ];
+        return response($response, 201); 
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -126,7 +145,7 @@ class PurchaseController extends Controller
     {
         $user = User::findOrFail($user_id);
         if($user->services()->exists()) {
-            $user_services = $user->services()->orderBy('created_at', 'desc')->get();
+            $user_services = $user->services()->orderBy('created_at', 'desc')->distinct()->paginate(10);
 
             foreach ($user_services as $s) {
                 $s["user_name"] = $user->name;
@@ -152,9 +171,10 @@ class PurchaseController extends Controller
     {
         $service = Service::findOrFail($service_id);
         if( $service->users()->exists() ) {
-            $service_users = $service->users()->orderBy('created_at', 'desc')->get();
+            $service_users = $service->users()->orderBy('created_at', 'desc')->distinct()->paginate(1);
             
             foreach ($service_users as $s) {
+                // if(in_array($service, $s))
                 $s["service_name"] = $service->name;
             }
             $response = [

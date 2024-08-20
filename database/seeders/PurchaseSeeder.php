@@ -15,7 +15,7 @@ class PurchaseSeeder extends Seeder
     public function run()
     {
         
-       \App\Models\User::factory(10)->create();
+    //    \App\Models\User::factory(10)->create();
         /* service user */
         $u10 = \App\Models\User::find(10);
         $u2 = \App\Models\User::find(2);

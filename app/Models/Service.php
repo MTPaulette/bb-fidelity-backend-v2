@@ -21,6 +21,8 @@ class Service extends Model
         'service_type',
         'agency',
         'description',
+        'is_registered',
+        'user_type',
     ];
     
     protected $sortable = [

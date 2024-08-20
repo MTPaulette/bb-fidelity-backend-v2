@@ -13,8 +13,10 @@ class UserController extends Controller
      */
     public function index()
     {
+
         $response = [
-            'users' => User::orderBy('name', 'asc')->get(),
+            // 'users' => User::orderBy('name', 'asc')->get(),
+            'users' => User::orderBy('name', 'asc')->paginate(10),
         ];
         return response($response, 201);
     }

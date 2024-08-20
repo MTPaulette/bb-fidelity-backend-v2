@@ -21,7 +21,7 @@ class ServiceController extends Controller
             'agency', 'validity', 'service_type', 'by', 'order'
         ]);
 
-        $services = Service::filter($filters)->get();
+        $services = Service::filter($filters)->paginate(20);
         
         if(sizeof($services) == 0) {
             return response([

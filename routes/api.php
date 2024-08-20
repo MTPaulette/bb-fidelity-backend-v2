@@ -27,6 +27,7 @@ Route::post("/register",[UserAccountController::class, "register"])->name("regis
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete("/logout",[UserAccountController::class, "logout"])->name("logout");
     Route::put('/profile', [UserAccountController::class, 'update'])->name('profile.update');
+    Route::get('/user', [UserAccountController::class, 'show'])->name('auth.user');
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
     // Route::post("/reset",[PasswordController::class, "store"])->name("reset");
     Route::get('/user/{user_id}/services', [PurchaseController::class, 'allServicesOfUser'])->name('user.services.show');

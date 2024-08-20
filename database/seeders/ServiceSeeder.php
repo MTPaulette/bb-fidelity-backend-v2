@@ -108,9 +108,9 @@ class ServiceSeeder extends Seeder
             ['name'=>"Bold (day)", 'price'=>"0", 'credit'=>"8", 'debit'=>"60", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Etoa-Meki' ,'description'=>"Bold (day)"],
             ['name'=>"Bold (week)", 'price'=>"0", 'credit'=>"40", 'debit'=>"60", 'service_type'=>'space', 'validity'=>'01 week', 'agency'=>'Etoa-Meki' ,'description'=>"Bold (week)"],
             
-            ['name'=>"Master Mind (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Etoa-Meki' ,'description'=>"Master Mind (hour)"],
-            ['name'=>"Master Mind (day)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Etoa-Meki' ,'description'=>"Master Mind (day)"],
-            ['name'=>"Master Mind (week)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 week', 'agency'=>'Etoa-Meki' ,'description'=>"Master Mind (week)"],
+            ['name'=>"Master Mind (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Etoa-Meki' ,'description'=>"Master Mind (hour)", 'user_type'=>'subscriber'],
+            ['name'=>"Master Mind (day)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Etoa-Meki' ,'description'=>"Master Mind (day)", 'user_type'=>'subscriber'],
+            ['name'=>"Master Mind (week)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 week', 'agency'=>'Etoa-Meki' ,'description'=>"Master Mind (week)", 'user_type'=>'subscriber'],
             
             
             //Elig edzoa service
@@ -143,25 +143,27 @@ class ServiceSeeder extends Seeder
             ['name'=>"Impact (day)", 'price'=>"0", 'credit'=>"8", 'debit'=>"60", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Impact (day)"],
             ['name'=>"Impact (week)", 'price'=>"0", 'credit'=>"40", 'debit'=>"300", 'service_type'=>'space', 'validity'=>'01 week', 'agency'=>'Elig Essono' ,'description'=>"Impact (week)"],
             
-            ['name'=>"Leader Suite (hour)", 'price'=>"0", 'credit'=>"3", 'debit'=>"20", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Leader Suite (hour)"],
-            ['name'=>"Leader Suite (midday)", 'price'=>"0", 'credit'=>"6", 'debit'=>"50", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Leader Suite (midday)"],
-            ['name'=>"Leader Suite (day)", 'price'=>"0", 'credit'=>"12", 'debit'=>"75", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Leader Suite (day)"],
+            ['name'=>"Leader Suite (hour)", 'price'=>"0", 'credit'=>"3", 'debit'=>"20", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Leader Suite (hour)", 'user_type'=>'subscriber'],
+            ['name'=>"Leader Suite (midday)", 'price'=>"0", 'credit'=>"6", 'debit'=>"50", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Leader Suite (midday)", 'user_type'=>'subscriber'],
+            ['name'=>"Leader Suite (day)", 'price'=>"0", 'credit'=>"12", 'debit'=>"75", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Leader Suite (day)", 'user_type'=>'subscriber'],
             
-            ['name'=>"Butterfly 1 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 1 (hour)"],
-            ['name'=>"Butterfly 1 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 1 (midday)"],
-            ['name'=>"Butterfly 1 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 1 (day)"],
+            ['name'=>"Butterfly 1 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 1 (hour)", 'user_type'=>'subscriber'],
+            ['name'=>"Butterfly 1 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 1 (midday)", 'user_type'=>'subscriber'],
+            ['name'=>"Butterfly 1 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 1 (day)", 'user_type'=>'subscriber'],
             
-            ['name'=>"Butterfly 2 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 2 (hour)"],
-            ['name'=>"Butterfly 2 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 2 (midday)"],
-            ['name'=>"Butterfly 2 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 2 (day)"],
+            ['name'=>"Butterfly 2 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 2 (hour)", 'user_type'=>'subscriber'],
+            ['name'=>"Butterfly 2 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 2 (midday)", 'user_type'=>'subscriber'],
+            ['name'=>"Butterfly 2 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Butterfly 2 (day)", 'user_type'=>'subscriber'],
             
-            ['name'=>"Eagles 1 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Eagles 1 (hour)"],
-            ['name'=>"Eagles 1 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Eagles 1 (midday)"],
-            ['name'=>"Eagles 1 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Eagles 1 (day)"],
+            ['name'=>"Eagles 1 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Eagles 1 (hour)", 'user_type'=>'subscriber'],
+            ['name'=>"Eagles 1 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Eagles 1 (midday)", 'user_type'=>'subscriber'],
+            ['name'=>"Eagles 1 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Eagles 1 (day)", 'user_type'=>'subscriber'],
             
-            ['name'=>"Eagles 2 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (hour)"],
-            ['name'=>"Eagles 2 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (midday)"],
-            ['name'=>"Eagles 2 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (day)"],
+            ['name'=>"Eagles 2 (hour)", 'price'=>"0", 'credit'=>"2.5", 'debit'=>"18", 'service_type'=>'space', 'validity'=>'01 hour', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (hour)", 'user_type'=>'subscriber'],
+            ['name'=>"Eagles 2 (midday)", 'price'=>"0", 'credit'=>"5", 'debit'=>"45", 'service_type'=>'space', 'validity'=>'midday', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (midday)", 'user_type'=>'subscriber'],
+            ['name'=>"Eagles 2 (day)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 day', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (day)", 'user_type'=>'subscriber'],
+            ['name'=>"Eagles 2 (month)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 month', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (month)", 'user_type'=>'resident'],
+            ['name'=>"Eagles 2 (year)", 'price'=>"0", 'credit'=>"10", 'debit'=>"65", 'service_type'=>'space', 'validity'=>'01 year', 'agency'=>'Elig Essono' ,'description'=>"Eagles 2 (year)", 'user_type'=>'resident'],
             
         ];
 

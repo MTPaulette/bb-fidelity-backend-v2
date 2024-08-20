@@ -38,5 +38,7 @@ class UserSeeder extends Seeder
             'email' => 'brain-booster@test.fr',
             'role_id' => 3,
         ]);
+        
+       \App\Models\User::factory(10)->create();
     }
 }

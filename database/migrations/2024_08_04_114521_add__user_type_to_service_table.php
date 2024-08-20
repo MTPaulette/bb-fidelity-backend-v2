@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::table('services', function (Blueprint $table) {
-            $table->enum('service_type', ['service', 'space', 'equipment'])->default('space');
-            $table->enum('agency', ['Elig Essono', 'Etoa-Meki'])->nullable();
+            $table->enum('user_type', ['sample', 'subscriber', 'resident'])->default('sample');
         });
     }
+
 
     /**
      * Reverse the migrations.
@@ -26,15 +26,9 @@ return new class extends Migration
      */
     public function down()
     {
-        if(Schema::hasColumn('services', 'service_type')) {
+        if(Schema::hasColumn('services', 'user_type')) {
             Schema::table('services', function (Blueprint $table) {
-                $table->dropColumn('service_type');
-            });
-        }
-
-        if(Schema::hasColumn('services', 'agency')) {
-            Schema::table('services', function (Blueprint $table) {
-                $table->dropColumn('agency');
+                $table->dropColumn('user_type');
             });
         }
     }

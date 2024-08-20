@@ -135,4 +135,19 @@ class UserAccountController extends Controller
             'message' => 'Logout user',
         ], 201);
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request)
+    {
+        $user = $request->user();
+        $response = [
+            'user' => $user,
+        ];
+        return response($response, 201);
+    }
 }
