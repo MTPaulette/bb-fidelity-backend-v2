@@ -33,25 +33,6 @@ class PurchaseController extends Controller
         return response($response, 201); 
     }
 
-    public function indexx()
-    {
-        $all_purchases = array();
-        $purchases = DB::table('purchases')->select('id', 'user_id')->orderByDesc('created_at')->get();
-        foreach ($purchases as $p) {
-            $user = User::findOrFail($p->user_id);
-
-            $purchase = $user->services()->having('pivot_id', $p->id)->first();
-
-            $purchase["user_name"] = $user->name;
-            array_push($all_purchases, (Object) $purchase );
-        };
-
-        $response = [
-            'purchases' => $all_purchases,
-        ];
-        return response($response, 201); 
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -59,6 +40,94 @@ class PurchaseController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
+    {
+        $service = Service::findOrFail($request->service_id);
+        $user = User::findOrFail($request->user_id);
+        $admin_id = $request->user()->id;
+        $by_cash = $request->by_cash;
+
+        $new_balance = 0;
+        $message = '';
+
+        try {
+            if($user->role_id != 2) {
+                return response([
+                    'errors' => "Only client can make purchase. not Admin",
+                ], 422);
+            }
+            if($by_cash) {
+                if($service->user_type == "subscriber" || $service->user_type == "resident") {
+                    if($user->is_registered) {
+                        $new_balance = $user->balance + $service->credit;
+                    } else {
+                        $new_balance = 0;
+                        $user->is_registered = true;
+                        //notification
+                        $message= "Purchase successfully saved. This user is now registered with the loyalty program and can benefit from all the advantages offered by this program.";
+                    }
+                } else {
+                    $new_balance = $user->balance + $service->credit;
+                }
+
+                $user->services()->attach($service, [
+                    'by_cash' => true, 
+                    'credit ' => $service->credit, 
+                    'debit ' => 0, 
+                    'user_balance' => $new_balance, 
+                    'admin_id' => $admin_id
+                ]);
+
+                if(!$user->is_registered) {
+                    if($new_balance >= 50) {
+                        $new_balance = $new_balance - 50;
+                        $message= "Purchase successfully saved. This user is now registered with the loyalty program and can benefit from all the advantages offered by this program.";
+                    }
+                }
+
+            } else {
+                if(!$user->is_registered) { 
+                    return response([
+                        'errors' => 'Only users registered with the loyalty program can make a payment by points.',
+                    ], 422);
+                } else {
+                    $new_balance = $user->balance - $service->debit;
+
+                    // check if user cant pay service with his balance
+                    if($new_balance < 0) {
+                        return response([
+                            'errors' => 'Your balance is insuffisant.',
+                        ], 422);
+                    } else {
+                        $user->services()->attach($service, [
+                            'by_cash' => false, 
+                            'credit' => 0,
+                            'debit ' => $service->debit, 
+                            'user_balance' => $new_balance, 
+                            'admin_id' => $admin_id
+                        ]);
+                    }
+                }
+            }
+
+            $user->balance = $new_balance;
+            $user->update();
+            
+            if($message == '') {
+                $message = 'Purchase successfully saved.';
+            }
+
+            $response = [
+                'message' => $message.' The user new balance is '.$user->balance
+            ];
+
+            return response($response, 201);
+
+        } catch (\Throwable $th) {
+            return $th;
+        }
+    }
+
+    public function storeee(Request $request)
     {
         $service = Service::findOrFail($request->service_id);
         $user = User::findOrFail($request->user_id);
@@ -145,7 +214,7 @@ class PurchaseController extends Controller
     {
         $user = User::findOrFail($user_id);
         if($user->services()->exists()) {
-            $user_services = $user->services()->orderBy('created_at', 'desc')->distinct()->paginate(10);
+            $user_services = $user->services()->orderBy('created_at', 'desc')->paginate(10);
 
             foreach ($user_services as $s) {
                 $s["user_name"] = $user->name;
@@ -171,10 +240,9 @@ class PurchaseController extends Controller
     {
         $service = Service::findOrFail($service_id);
         if( $service->users()->exists() ) {
-            $service_users = $service->users()->orderBy('created_at', 'desc')->distinct()->paginate(1);
+            $service_users = $service->users()->orderBy('created_at', 'desc')->paginate(10);
             
             foreach ($service_users as $s) {
-                // if(in_array($service, $s))
                 $s["service_name"] = $service->name;
             }
             $response = [

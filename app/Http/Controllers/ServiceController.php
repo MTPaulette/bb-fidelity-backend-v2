@@ -18,10 +18,15 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $filters = $request->only([
-            'agency', 'validity', 'service_type', 'by', 'order'
+            'agency', 'validity', 'service_type', 'by', 'order', 'user_type', 'q'
         ]);
 
-        $services = Service::filter($filters)->paginate(20);
+
+        if($request->has('no_pagination')) {
+            $services = Service::filter($filters)->get();
+        } else {
+            $services = Service::filter($filters)->paginate(20);
+        }
         
         if(sizeof($services) == 0) {
             return response([
@@ -65,6 +70,13 @@ class ServiceController extends Controller
         $service = Service::create($validator->validated());
         $service = Service::where('name', $request->name)->first();
         $service->user_id = $request->user()->id;
+
+        if($request->validity == '01 month') {
+            $service->user_type = 'subscriber';
+        }
+        if($request->validity == '01 year') {
+            $service->user_type = 'resident';
+        }
 
         $service->save();
         $response = [

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -11,12 +12,16 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->has('no_pagination')) {
+            $users =  User::orderBy('name', 'asc')->get();
+        } else {
+            $users = User::orderBy('name', 'asc')->paginate(10);
+        }
 
         $response = [
-            // 'users' => User::orderBy('name', 'asc')->get(),
-            'users' => User::orderBy('name', 'asc')->paginate(10),
+            'users' => $users,
         ];
         return response($response, 201);
     }
