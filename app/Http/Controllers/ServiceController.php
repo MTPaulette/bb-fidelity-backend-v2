@@ -59,6 +59,7 @@ class ServiceController extends Controller
             'service_type' => 'required|string',
             'agency' => 'required|string',
             'description' => 'required|string',
+            'user_type' => 'required|string',
         ]);
 
         if($validator->fails()){
@@ -158,6 +159,10 @@ class ServiceController extends Controller
 
         if($request->description) {
             $service->description = $request->description;
+        }
+
+        if($request->user_type) {
+            $service->user_type = $request->user_type;
         }
 
         $service->update();
