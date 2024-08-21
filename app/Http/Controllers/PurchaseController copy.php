@@ -48,7 +48,6 @@ class PurchaseController extends Controller
 
         $new_balance = 0;
         $message = '';
-        //return gettype($service->debit);
 
         try {
             if($user->role_id != 2) {
@@ -72,7 +71,7 @@ class PurchaseController extends Controller
 
                 $user->services()->attach($service, [
                     'by_cash' => true,
-                    'credit' => doubleval($service->credit),
+                    'credit ' => (doubleval($service->credit)),
                     'debit ' => 0,
                     'user_balance' => $new_balance,
                     'admin_id' => $admin_id
@@ -92,7 +91,6 @@ class PurchaseController extends Controller
                         'errors' => 'Only users registered with the loyalty program can make a payment by points.',
                     ], 422);
                 } else {
-                        //return strval($service->debit);
                     $new_balance = $user->balance - $service->debit;
 
                     // check if user cant pay service with his balance
@@ -102,10 +100,10 @@ class PurchaseController extends Controller
                         ], 422);
                     } else {
                         $user->services()->attach($service, [
-                            'by_cash' => false,
+                            'by_cash' => false, 
                             'credit' => 0,
-                            'debit' => doubleval($service->debit),
-                            'user_balance' => $new_balance,
+                            'debit ' => $service->debit, 
+                            'user_balance' => $new_balance, 
                             'admin_id' => $admin_id
                         ]);
                     }
