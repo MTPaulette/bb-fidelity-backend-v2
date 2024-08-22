@@ -63,8 +63,10 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'point' => 'required|numeric',
-            'password' => 'required|string',
+            'is_registered' => 'boolean',
+            'user_type' => 'string',
+            'point' => 'numeric|min:0',
+            'malus' => 'boolean'
         ]);
 
         if($validator->fails()){
@@ -72,33 +74,24 @@ class UserController extends Controller
                 'errors' => $validator->errors(),
             ], 500);
         }
-        
-        if( $request->point < 0 ) {
-            $response = [
-                'error' => 'Point must be a positive number.',
-            ];
-            return response($response, 500);
-        }
-
-        $auth = $request->user();
-        if (! Hash::check($request->password, $auth->password)) {
-            $response = [
-                'password' => 'Wrong password.'
-            ];
-            return response($response, 422);
-        }
 
         $user = User::findOrFail($request->id);
         if($request->point) {
             if($request->malus) {
                 $user->balance = $user->balance - $request->point;
-            }else {
-            $user->balance = $user->balance + $request->point;
+            }   else {
+                $user->balance = $user->balance + $request->point;
             }
+        }
+        if($request->is_registered) {
+            $user->is_registered = $request->is_registered;
+        }
+        if($request->user_type) {
+            $user->user_type = $request->user_type;
         }
         $user->update();
         $response = [
-            'message' => "user's point updated",
+            'message' => "$user->name 's informations updated.",
         ];
 
         return response($response, 201);

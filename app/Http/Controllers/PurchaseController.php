@@ -66,6 +66,7 @@ class PurchaseController extends Controller
                         //notification
                         $message= "Purchase successfully saved. This user is now registered with the loyalty program and can benefit from all the advantages offered by this program.";
                     }
+                    $user->user_type = $service->user_type;
                 } else {
                     $new_balance = $user->balance + $service->credit;
                 }
@@ -108,6 +109,9 @@ class PurchaseController extends Controller
                             'user_balance' => $new_balance,
                             'admin_id' => $admin_id
                         ]);
+                        if($service->user_type == "subscriber" || $service->user_type == "resident") {
+                            $user->user_type = $service->user_type;
+                        }
                     }
                 }
             }

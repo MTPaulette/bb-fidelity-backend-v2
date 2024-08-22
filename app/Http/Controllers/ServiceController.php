@@ -121,7 +121,6 @@ class ServiceController extends Controller
      */
     public function update(Request $request)
     {
-        $service = Service::findOrFail($request->id);
         $validator = Validator::make($request->all(),[
             'name' => 'required|string'
         ]);
@@ -131,6 +130,8 @@ class ServiceController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+        
+        $service = Service::findOrFail($request->id);
 
         if($request->name) {
             $service->name = $request->name;
