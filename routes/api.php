@@ -59,6 +59,10 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     
 });
 
+
+Route::post('/forgot-password', [PasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::post('/reset-password', [PasswordController::class, 'reset']);
+
 // http://127.0.0.1:8000/api/register?email=mayogue@test.com&name=mayogue&password=123456789&confirm_password=123456789
 
 // http://127.0.0.1:8000/api/service/1/users

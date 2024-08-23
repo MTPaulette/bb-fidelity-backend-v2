@@ -119,8 +119,12 @@ class PasswordController extends Controller
         $status = Password::reset(
             $request->only('email', 'password', 'token'),
             function ($user, $password) {
-                $user->password = $password;
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ]); //->setRememberToken(Str::random(60));
+
                 $user->save();
+                $user = $user;
                 //event(new PasswordReset($user));
             }
         );

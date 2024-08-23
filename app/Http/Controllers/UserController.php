@@ -79,6 +79,9 @@ class UserController extends Controller
         if($request->point) {
             if($request->malus) {
                 $user->balance = $user->balance - $request->point;
+                if($user->balance < 0) {
+                    $user->balance = 0;
+                }
             }   else {
                 $user->balance = $user->balance + $request->point;
             }
