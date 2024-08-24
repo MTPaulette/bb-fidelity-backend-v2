@@ -24,6 +24,7 @@ class UserFactory extends Factory
             'password' => 'password', // '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'balance' => fake()->numberBetween(1, 150),
             'remember_token' => Str::random(10),
+            'user_id' => 1,
         ];
     }
 

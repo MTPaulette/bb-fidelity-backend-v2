@@ -99,4 +99,45 @@ class UserController extends Controller
 
         return response($response, 201);
     }
+    
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|string|max:50',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:6',
+            'balance' => 'numeric|min:0',
+        ]);
+
+        if($validator->fails()){
+            return response([
+                'errors' => $validator->errors(),
+            ], 500);
+        }
+
+        $user = User::create($validator->validated());
+
+        $user = User::where('email', $request->email)->first();
+
+        if($request->has('role_id')) {
+            $user->role_id = $request->role_id;
+        } else {
+            $user->role_id = 1;
+        }
+
+        $user->user_id = $request->user()->id;
+        $user->save();
+        $response = [
+            'user' => $user,
+            'message' => 'The user '.$user->name.' account successfully created',
+        ];
+
+        return response($response, 201);
+    }
 }

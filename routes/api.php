@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/user/{id}', [UserController::class, 'show'])->name('user.show');
     Route::get('/recent/user', [UserController::class, 'recent'])->name('user.recent');
+    Route::post("/user/store",[UserController::class, "store"])->name("user.store");
     Route::put("/user/{id}/update",[UserController::class, "update"])->name("update.point");
     
     /* service's route */

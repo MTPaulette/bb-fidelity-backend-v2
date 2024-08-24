@@ -18,7 +18,7 @@ class PurchaseSeeder extends Seeder
     //    \App\Models\User::factory(10)->create();
         /* service user */
         $u10 = \App\Models\User::find(10);
-        $u2 = \App\Models\User::find(2);
+        $u2 = \App\Models\User::find(8);
         $u5 = \App\Models\User::find(5);
         $u7 = \App\Models\User::find(7);
         $u6 = \App\Models\User::find(6);

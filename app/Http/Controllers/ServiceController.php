@@ -18,7 +18,7 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $filters = $request->only([
-            'agency', 'validity', 'service_type', 'by', 'order', 'user_type', 'q'
+            'agency', 'validity', 'service_type', 'by', 'order', 'q'
         ]);
 
 
@@ -59,7 +59,6 @@ class ServiceController extends Controller
             'service_type' => 'required|string',
             'agency' => 'required|string',
             'description' => 'required|string',
-            'user_type' => 'required|string',
         ]);
 
         if($validator->fails()){
@@ -71,13 +70,6 @@ class ServiceController extends Controller
         $service = Service::create($validator->validated());
         $service = Service::where('name', $request->name)->first();
         $service->user_id = $request->user()->id;
-
-        if($request->validity == '01 month') {
-            $service->user_type = 'subscriber';
-        }
-        if($request->validity == '01 year') {
-            $service->user_type = 'resident';
-        }
 
         $service->save();
         $response = [
@@ -161,11 +153,6 @@ class ServiceController extends Controller
         if($request->description) {
             $service->description = $request->description;
         }
-
-        if($request->user_type) {
-            $service->user_type = $request->user_type;
-        }
-
         $service->update();
         $response = [
             'service' => $service,

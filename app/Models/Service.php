@@ -21,8 +21,6 @@ class Service extends Model
         'service_type',
         'agency',
         'description',
-        'is_registered',
-        'user_type',
     ];
     
     protected $sortable = [
@@ -70,9 +68,6 @@ class Service extends Model
             !in_array($value, $this->sortable)
                 ? $query :
                 $query->orderBy($value, $filters['order'] ?? 'asc')
-        )->when(
-            $filters['user_type'] ?? false,
-            fn ($query, $value) => $query->where('user_type', '=', $value)
         )
         ->when(
             $filters['q'] ?? false,

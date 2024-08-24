@@ -24,8 +24,7 @@ return new class extends Migration
             $table->float('debit')->default(0);
             $table->unsignedInteger('user_balance')->default(0);
             
-            $table->unsignedBigInteger('admin_id')->nullable();
-
+            $table->unsignedBigInteger('admin_id');
             $table->foreign('admin_id')->references('id')->on('users'); // ->nullable()->constrained()->cascadeOnDelete();
 
             //$table->foreignId('admin_id')->nullable()->constrained(

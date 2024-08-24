@@ -21,11 +21,11 @@ return new class extends Migration
             $table->float('debit')->default(0);
 
             $table->string('validity')->default('01 hour');
-            // $table->enum('service_type', ['service', 'space', 'equipment'])->default('space');
-            // $table->enum('agency', ['Elig Essono', 'Etoa-Meki'])->default('Elig Essono');
+            $table->enum('service_type', ['service', 'space', 'equipment'])->default('space');
+            $table->enum('agency', ['Elig Essono', 'Etoa-Meki'])->nullable();
 
             $table->text('description')->nullable();
-            $table->foreignIdFor(\App\Models\User::class)->default(1);
+            $table->foreignIdFor(\App\Models\User::class)->nullable();
             $table->timestamps();
         });
     }

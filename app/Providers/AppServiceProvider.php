@@ -24,10 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //$this->registerPolicies();
-     
         ResetPassword::createUrlUsing(function ($user, string $token) {
-            return 'http://127.0.0.1:3000/reset-password?token='.$token;
+            //return 'http://127.0.0.1:3000/reset-password?token='.$token;
+
+            // in production mode
+           return 'https://fidelity.bbdesign.dev/reset-password?token='.$token;
         });
     }
 }

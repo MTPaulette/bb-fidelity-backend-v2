@@ -27,7 +27,7 @@ class User extends Authenticatable
         'email',
         'password',
         'balance',
-        'user_type',
+        'is_registered',
     ];
 
     /**
@@ -72,6 +72,14 @@ class User extends Authenticatable
 
     public function purchases(): HasMany {
         return $this->hasMany(Purchase::class);
+    }
+
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
+    }
+    
+    public function users(): HasMany {
+        return $this->hasMany(User::class);
     }
 
 }
