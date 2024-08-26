@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     Route::get('/recent/user', [UserController::class, 'recent'])->name('user.recent');
     Route::post("/user/store",[UserController::class, "store"])->name("user.store");
     Route::put("/user/{id}/update",[UserController::class, "update"])->name("update.point");
+    Route::put('/user/{id}/delete', [UserController::class, 'destroy'])->name('user.delete');
     
     /* service's route */
     Route::get('/services', [ServiceController::class, 'index'])->name('services');

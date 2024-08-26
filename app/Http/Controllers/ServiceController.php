@@ -52,9 +52,9 @@ class ServiceController extends Controller
     {
         $validator = Validator::make($request->all(),[
             'name' => 'required|string|unique:services',
-            'price' => 'required',
-            'credit' => 'required',
-            'debit' => 'required',
+            'price' => 'required|numeric|min:0',
+            'credit' => 'required|numeric',
+            'debit' => 'required|numeric',
             'validity' => 'required',
             'service_type' => 'required|string',
             'agency' => 'required|string',

@@ -55,52 +55,6 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request)
-    {
-        $validator = Validator::make($request->all(),[
-            'is_registered' => 'boolean',
-            'user_type' => 'string',
-            'point' => 'numeric|min:0',
-            'malus' => 'boolean'
-        ]);
-
-        if($validator->fails()){
-            return response([
-                'errors' => $validator->errors(),
-            ], 500);
-        }
-
-        $user = User::findOrFail($request->id);
-        if($request->point) {
-            if($request->malus) {
-                $user->balance = $user->balance - $request->point;
-                if($user->balance < 0) {
-                    $user->balance = 0;
-                }
-            }   else {
-                $user->balance = $user->balance + $request->point;
-            }
-        }
-        if($request->is_registered) {
-            $user->is_registered = $request->is_registered;
-        }
-        if($request->user_type) {
-            $user->user_type = $request->user_type;
-        }
-        $user->update();
-        $response = [
-            'message' => "$user->name 's informations updated.",
-        ];
-
-        return response($response, 201);
-    }
-    
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -139,5 +93,94 @@ class UserController extends Controller
         ];
 
         return response($response, 201);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'is_registered' => 'boolean',
+            'point' => 'numeric|min:0',
+            'malus' => 'boolean'
+        ]);
+
+        if($validator->fails()){
+            return response([
+                'errors' => $validator->errors(),
+            ], 500);
+        }
+
+        $user = User::findOrFail($request->id);
+        if($request->point) {
+            if($request->malus) {
+                $user->balance = $user->balance - $request->point;
+                if($user->balance < 0) {
+                    $user->balance = 0;
+                }
+            }   else {
+                $user->balance = $user->balance + $request->point;
+            }
+        }
+        if($request->is_registered) {
+            $user->is_registered = $request->is_registered;
+        }
+        $user->update();
+        $response = [
+            'message' => "$user->name, 's informations updated.",
+        ];
+
+        return response($response, 201);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request)
+    {
+        $authenticated_user = $request->user();
+        if (! Hash::check($request->password, $authenticated_user->password)) {
+            $response = [
+                'password' => 'Wrong password.'
+            ];
+            return response($response, 422);
+        }
+ 
+        $user = User::findOrFail($request->id);
+
+        if($authenticated_user->role_id != 3) {
+            if($user->role_id == 3) {
+                $response = [
+                    'error' => 'Only superadmin can delete another one',
+                ];
+                return response($response, 422);
+            } else if($user->role_id == 1) {
+                $response = [
+                    'error' => 'Only superadmin can delete an admin',
+                ];
+                return response($response, 422);
+            }
+        }
+
+        // check if the user has already been buy a service
+        if( $user->services()->exists() ) {
+            $response = [
+                'error' => 'The user '.$user->name.' has already been maked purchase. You can not delete it',
+            ];
+            return response($response, 422);
+        } else {
+            $user->delete();
+            $response = [
+                'message' => "User successfully deleted",
+            ];
+            return response($response, 201);
+        }
     }
 }
