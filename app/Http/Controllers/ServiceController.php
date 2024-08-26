@@ -73,7 +73,8 @@ class ServiceController extends Controller
 
         $service->save();
         $response = [
-            'message' => 'Service successfully created.'
+            'service_id' => $service->id,
+            'message' => 'The service '.$service->name.' was successfully created',
         ];
 
         return response($response, 201);

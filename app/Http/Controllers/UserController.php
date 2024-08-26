@@ -128,13 +128,13 @@ class UserController extends Controller
         if($request->has('role_id')) {
             $user->role_id = $request->role_id;
         } else {
-            $user->role_id = 1;
+            $user->role_id = 2; //2 for role client
         }
 
         $user->user_id = $request->user()->id;
         $user->save();
         $response = [
-            'user' => $user,
+            'user_id' => $user->id,
             'message' => 'The user '.$user->name.' account successfully created',
         ];
 
