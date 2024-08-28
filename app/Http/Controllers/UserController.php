@@ -25,7 +25,6 @@ class UserController extends Controller
             $users =  User::filter($filters)->get();
         } else {
             $users = User::filter($filters)->paginate(10);
-            // $users = User::orderBy('name', 'asc')->paginate(10);
         }
         
         if(sizeof($users) == 0) {
@@ -129,7 +128,7 @@ class UserController extends Controller
         }
 
         $user = User::findOrFail($request->id);
-        if($request->point) {
+        if($request->has("point")) {
             if($request->malus) {
                 $user->balance = $user->balance - $request->point;
                 if($user->balance < 0) {
@@ -139,7 +138,7 @@ class UserController extends Controller
                 $user->balance = $user->balance + $request->point;
             }
         }
-        if($request->is_registered) {
+        if($request->has("is_registered")) {
             $user->is_registered = $request->is_registered;
         }
         $user->update();
