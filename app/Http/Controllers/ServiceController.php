@@ -30,7 +30,6 @@ class ServiceController extends Controller
         
         if(sizeof($services) == 0) {
             return response([
-                'services' => $services,
                 'errors' => 'No result.',
             ], 422);
         } else {

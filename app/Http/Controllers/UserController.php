@@ -16,16 +16,29 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        $filters = $request->only([
+            'by', 'order', 'q', 'is_registered'
+        ]);
+        // return boolval($filters['is_registered']);
+        // return gettype(boolval($filters['is_registered']));
         if($request->has('no_pagination')) {
-            $users =  User::orderBy('name', 'asc')->get();
+            $users =  User::filter($filters)->get();
         } else {
-            $users = User::orderBy('name', 'asc')->paginate(10);
+            $users = User::filter($filters)->paginate(10);
+            // $users = User::orderBy('name', 'asc')->paginate(10);
+        }
+        
+        if(sizeof($users) == 0) {
+            return response([
+                'errors' => 'No result.',
+            ], 422);
+        } else {
+            $response = [
+                'users' => $users,
+            ];
+            return response($response, 201);
         }
 
-        $response = [
-            'users' => $users,
-        ];
-        return response($response, 201);
     }
     
     /**

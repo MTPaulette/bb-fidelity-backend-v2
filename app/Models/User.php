@@ -3,6 +3,7 @@
 namespace App\Models;
 
 //use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -49,6 +50,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $sortable = [
+        'name', 'role_id', 'created_at', 'balance'
+    ];
+
     protected function password(): Attribute {
         return Attribute::make(
             get: fn ($value) => $value,
@@ -80,6 +85,44 @@ class User extends Authenticatable
     
     public function users(): HasMany {
         return $this->hasMany(User::class);
+    }
+
+    public function scopeFilterr(Builder $query, array $filters): Builder
+    {
+        return $query->when(
+            $filters['by'] ?? false,
+            fn ($query, $value) =>
+            !in_array($value, $this->sortable)
+                ? $query :
+                $query->orderBy($value, $filters['order'] ?? 'asc')
+                // $order = $filters['asc'] ? 'asc': 'desc'
+                //$query->orderBy($value, $order)
+        )->when(
+            $filters['q'] ?? false,
+            fn ($query, $value) => $query->where('name', 'LIKE', "%{$value}%")
+        );
+    }
+
+    public function scopeFilter(Builder $query, array $filters): Builder
+    {
+        return $query->when(
+            $filters['by'] ?? false,
+            fn ($query, $value) =>
+            !in_array($value, $this->sortable)
+                ? $query :
+                $query->orderBy($value, $filters['order'] ?? 'asc')
+        )->when(
+            $filters['q'] ?? false,
+            fn ($query, $value) => $query->where('name', 'LIKE', "%{$value}%")
+        )->when($filters['is_registered'] ?? false, function ($query, $value) {
+                if($value == 'true') {
+                    $query->where('is_registered', true);
+                } 
+                if($value == 'false') {
+                    $query->where('is_registered', false);
+                }
+            }
+        );
     }
 
 }
