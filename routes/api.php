@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LogActivityController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PurchaseController;
@@ -59,11 +60,18 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     
     Route::get('/service/{service_id}/users', [PurchaseController::class, 'allUsersOfService'])->name('service.users.show');
     
+
+    Route::get('/add-to-log', [LogActivityController::class, 'store'])->name('add-to-log');
+    Route::get('/activity-log', [LogActivityController::class, 'index'])->name('logActivity');
+
+
 });
 
 
 Route::post('/forgot-password', [PasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::post('/reset-password', [PasswordController::class, 'reset']);
+
+
 
 // http://127.0.0.1:8000/api/register?email=mayogue@test.com&name=mayogue&password=123456789&confirm_password=123456789
 

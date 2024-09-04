@@ -79,6 +79,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'balance' => 'numeric|min:0',
+            'is_registered' => 'boolean',
         ]);
 
         if($validator->fails()){
