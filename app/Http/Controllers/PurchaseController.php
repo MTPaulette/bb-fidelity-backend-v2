@@ -6,6 +6,9 @@ use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\RegisteredUser;
+
+use Illuminate\Support\Facades\Notification;
 
 class PurchaseController extends Controller
 {
@@ -41,6 +44,7 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
+        $new_registered_user = false;
         $service = Service::findOrFail($request->service_id);
         $user = User::findOrFail($request->user_id);
         $admin_id = $request->user()->id;
@@ -72,6 +76,7 @@ class PurchaseController extends Controller
                     if($new_balance >= 50) {
                         $new_balance = $new_balance - 50;
                         $user->is_registered = true;
+                        $new_registered_user = true;
                         $message= "Purchase successfully saved. This user is now registered with the loyalty program and can benefit from all the advantages offered by this program.";
                     }
                 }
@@ -111,9 +116,17 @@ class PurchaseController extends Controller
                 $message = 'Purchase successfully saved.';
             }
 
+            $admins = User::allAdmin()->get();
             $response = [
-                'message' => $message.' The user new balance is '.$user->balance
+                'message' => $message.' The user new balance is '.$user->balance,
+                'admins' => $admins
             ];
+
+            if($new_registered_user) {
+                $user->notify(new RegisteredUser($user, $service));
+                Notification::sendNow($admins, new RegisteredUser($user, $service));
+            }
+            // $user->notify(new SuccessfulPurchase($service));
             return response($response, 201);
 
         } catch (\Throwable $th) {

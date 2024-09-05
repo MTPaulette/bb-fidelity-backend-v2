@@ -87,20 +87,9 @@ class User extends Authenticatable
         return $this->hasMany(User::class);
     }
 
-    public function scopeFilterr(Builder $query, array $filters): Builder
+    public function scopeAllAdmin(Builder $query): Builder
     {
-        return $query->when(
-            $filters['by'] ?? false,
-            fn ($query, $value) =>
-            !in_array($value, $this->sortable)
-                ? $query :
-                $query->orderBy($value, $filters['order'] ?? 'asc')
-                // $order = $filters['asc'] ? 'asc': 'desc'
-                //$query->orderBy($value, $order)
-        )->when(
-            $filters['q'] ?? false,
-            fn ($query, $value) => $query->where('name', 'LIKE', "%{$value}%")
-        );
+        return $query->where('role_id', 1)->orWhere('role_id', 3);
     }
 
     public function scopeFilter(Builder $query, array $filters): Builder
