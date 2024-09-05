@@ -76,6 +76,7 @@ class ServiceController extends Controller
             'message' => 'The service '.$service->name.' was successfully created',
         ];
 
+        \LogActivity::addToLog('New service created.<br/> Service ID: '.$service->id.'  Service name: '.$service->name);
         return response($response, 201);
     }
 
@@ -113,6 +114,7 @@ class ServiceController extends Controller
      */
     public function update(Request $request)
     {
+        $messageLog = '';
         $validator = Validator::make($request->all(),[
             'name' => 'required|string',
             'price' => 'required|numeric|min:1',
@@ -133,39 +135,64 @@ class ServiceController extends Controller
         $service = Service::findOrFail($request->id);
 
         if($request->name) {
+            if($request->name != $service->name) {
+                $messageLog = $messageLog.'Old name: '.$service->name.', New name: '.$request->name." | ";
+            }
             $service->name = $request->name;
         }
         if($request->price) {
+            if($request->price != $service->price) {
+                $messageLog = $messageLog.'Old price: '.$service->price.', New price: '.$request->price." | ";
+            }
             $service->price = $request->price;
         }
         if($request->credit) {
+            if($request->credit != $service->credit) {
+                $messageLog = $messageLog.'Old credit: '.$service->credit.', New credit: '.$request->credit." | ";
+            }
             $service->credit = $request->credit;
         }
         if($request->debit) {
+            if($request->debit != $service->debit) {
+                $messageLog = $messageLog.'Old debit: '.$service->debit.', New debit: '.$request->debit." | ";
+            }
             $service->debit = $request->debit;
         }
 
         if($request->validity) {
+            if($request->validity != $service->validity) {
+                $messageLog = $messageLog.'<br/> Old validity: '.$service->validity.', New validity: '.$request->validity." | ";
+            }
             $service->validity = $request->validity;
         }
 
         if($request->agency) {
+            if($request->agency != $service->agency) {
+                $messageLog = $messageLog.'Old agency: '.$service->agency.', New agency: '.$request->agency." | ";
+            }
             $service->agency = $request->agency;
         }
 
         if($request->service_type) {
+            if($request->service_type != $service->service_type) {
+                $messageLog = $messageLog.'Old type of service: '.$service->service_type.', New type of service: '.$request->service_type." | ";
+            }
             $service->service_type = $request->service_type;
         }
 
         if($request->description) {
+            if($request->description != $service->description) {
+                $messageLog = $messageLog.'description updated.';
+            }
             $service->description = $request->description;
         }
         $service->update();
         $response = [
+            'messageLog' => $messageLog,
             'service' => $service,
             'message' => "Service successfully updated",
         ];
-
+        \LogActivity::addToLog("Service updated.<br/> Service ID: ".$service->id." | ".$messageLog);
         return response($response, 201);
     }
 
@@ -195,6 +222,7 @@ class ServiceController extends Controller
                 return response($response, 422);
             } else {
                 $service->delete();
+                \LogActivity::addToLog('Service '.$service->name.' deleted');
                 $response = [
                     'message' => "Service successfully deleted",
                 ];

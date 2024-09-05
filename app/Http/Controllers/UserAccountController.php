@@ -119,6 +119,7 @@ class UserAccountController extends Controller
             'message' => 'profile updated.',
         ];
 
+        \LogActivity::addToLog('User '.$user->name.' updated name.');
         return response($response, 201);
     }
 

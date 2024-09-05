@@ -61,8 +61,9 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     Route::get('/service/{service_id}/users', [PurchaseController::class, 'allUsersOfService'])->name('service.users.show');
     
 
-    Route::get('/add-to-log', [LogActivityController::class, 'store'])->name('add-to-log');
     Route::get('/activity-log', [LogActivityController::class, 'index'])->name('logActivity');
+    Route::get('/add-to-log', [LogActivityController::class, 'store'])->name('add-to-log');
+    Route::put('/clear-logs', [LogActivityController::class, 'destroy'])->name('clear-logs');
 
 
 });

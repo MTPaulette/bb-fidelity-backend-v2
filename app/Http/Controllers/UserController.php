@@ -19,8 +19,6 @@ class UserController extends Controller
         $filters = $request->only([
             'by', 'order', 'q', 'is_registered'
         ]);
-        // return boolval($filters['is_registered']);
-        // return gettype(boolval($filters['is_registered']));
         if($request->has('no_pagination')) {
             $users =  User::filter($filters)->get();
         } else {
@@ -105,6 +103,7 @@ class UserController extends Controller
             'message' => 'The user '.$user->name.' account successfully created',
         ];
 
+        \LogActivity::addToLog('New user created.<br/>User ID: '.$user->id.'  User name: '.$user->name);
         return response($response, 201);
     }
 
@@ -116,6 +115,8 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
+        $messageLog = '';
+        $new_balance = 0;
         $validator = Validator::make($request->all(),[
             'is_registered' => 'boolean',
             'point' => 'numeric|min:0',
@@ -131,22 +132,34 @@ class UserController extends Controller
         $user = User::findOrFail($request->id);
         if($request->has("point")) {
             if($request->malus) {
-                $user->balance = $user->balance - $request->point;
+                $new_balance = $user->balance - $request->point;
                 if($user->balance < 0) {
-                    $user->balance = 0;
+                    $new_balance = 0;
                 }
             }   else {
-                $user->balance = $user->balance + $request->point;
+                $new_balance = $user->balance + $request->point;
             }
+
+            if($new_balance != $user->balance) {
+                $messageLog = " | Old balance: ".$user->balance.", New balance: ".$new_balance;
+            }
+            $user->balance = $new_balance;
         }
         if($request->has("is_registered")) {
+            if($request->is_registered != $user->is_registered) {
+                if($request->is_registered) {
+                    $messageLog = $messageLog.' | Registered user to the bb-fidelity program.';
+                } else {
+                    $messageLog = $messageLog.' | Unregistered user to the bb-fidelity program.';
+                }
+            }
             $user->is_registered = $request->is_registered;
         }
         $user->update();
         $response = [
             'message' => "$user->name, 's informations updated.",
         ];
-
+        \LogActivity::addToLog("User's informations updated.<br/> User ID: ".$user->id."  User name: ".$user->name." ".$messageLog);
         return response($response, 201);
     }
 
@@ -193,6 +206,8 @@ class UserController extends Controller
             $response = [
                 'message' => "User successfully deleted",
             ];
+
+            \LogActivity::addToLog('User '.$user->name.' deleted');
             return response($response, 201);
         }
     }

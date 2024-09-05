@@ -48,6 +48,7 @@ class PurchaseController extends Controller
 
         $new_balance = 0;
         $message = '';
+        $payment_mode = '';
         //return gettype($service->debit);
 
         try {
@@ -57,6 +58,7 @@ class PurchaseController extends Controller
                 ], 422);
             }
             if($by_cash) {
+                $payment_mode = 'by cash';
                 $new_balance = $user->balance + $service->credit;
                 $user->services()->attach($service, [
                     'by_cash' => true,
@@ -75,12 +77,12 @@ class PurchaseController extends Controller
                 }
 
             } else {
+                $payment_mode = 'by point';
                 if(!$user->is_registered) { 
                     return response([
                         'errors' => 'Only users registered with the loyalty program can make a payment by points.',
                     ], 422);
                 } else {
-                        //return strval($service->debit);
                     $new_balance = $user->balance - $service->debit;
 
                     // check if user cant pay service with his balance
@@ -100,6 +102,7 @@ class PurchaseController extends Controller
                 }
             }
 
+            \LogActivity::addToLog('New purchase created.<br/> User name: '.$user->name.', Service name: '.$service->name. ',<br/> Payment mode: '.$payment_mode.', Old user balance: '.$user->balance.', New user balance: '.$new_balance);
             // return $new_balance;
             $user->balance = $new_balance;
             $user->save();
@@ -111,7 +114,6 @@ class PurchaseController extends Controller
             $response = [
                 'message' => $message.' The user new balance is '.$user->balance
             ];
-
             return response($response, 201);
 
         } catch (\Throwable $th) {

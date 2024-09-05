@@ -11,6 +11,7 @@ class LogActivity
 {
     public static function addToLog($description)
     {
+        //return Request::user();
     	$log = [];
     	$log['description'] = $description;
     	$log['url'] = Request::fullUrl();
@@ -18,7 +19,7 @@ class LogActivity
     	$log['ip'] = Request::ip();
     	$log['agent'] = Request::header('user-agent');
     	$log['user_id'] = auth()->user()->id;
-    	// $log['user_id'] = auth()->check() ? auth()->user()->id : 1;
+    	//$log['user_id'] = auth()->check() ? auth()->user()->id : 1;
     	LogActivityModel::create($log);
     }
 

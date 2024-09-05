@@ -45,6 +45,7 @@ class PasswordController extends Controller
                 'token' => $token,
                 'message' => "Password Updated Successfully"
             ];
+            \LogActivity::addToLog('User '.$user->name.' updated password.');
             return response($response, 201);
 
         }else{
@@ -90,14 +91,12 @@ class PasswordController extends Controller
             'message' => [__($status)],
         ];
         return response($response, 201);
-    } else {
-        $response = [
-            'errors' => [__($status)],
-        ];
-        return response($response, 500);
-    }
-
-
+        } else {
+            $response = [
+                'errors' => [__($status)],
+            ];
+            return response($response, 500);
+        }
     }
     
     public function reset(Request $request)
