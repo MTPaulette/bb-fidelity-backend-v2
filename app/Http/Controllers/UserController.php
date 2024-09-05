@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $filters = $request->only([
-            'by', 'order', 'q', 'is_registered'
+            'by', 'order', 'q', 'is_registered', 'date'
         ]);
         if($request->has('no_pagination')) {
             $users =  User::filter($filters)->get();

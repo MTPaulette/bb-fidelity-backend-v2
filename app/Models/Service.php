@@ -72,6 +72,9 @@ class Service extends Model
         ->when(
             $filters['q'] ?? false,
             fn ($query, $value) => $query->where('name', 'LIKE', "%{$value}%")
+        )->when(
+            $filters['date'] ?? false,
+            fn ($query, $value) => $query->whereDate('services.created_at', date('Y-m-d', strtotime($value)))
         );
     }
 }

@@ -34,6 +34,9 @@ class LogActivity extends Model
         )->when(
             $filters['q'] ?? false,
             fn ($query, $value) => $query->where('description', 'LIKE', "%{$value}%")
+        )->when(
+            $filters['date'] ?? false,
+            fn ($query, $value) => $query->whereDate('log_activities.created_at', date('Y-m-d', strtotime($value)))
         );
     }
 }

@@ -18,7 +18,7 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $filters = $request->only([
-            'agency', 'validity', 'service_type', 'by', 'order', 'q'
+            'agency', 'validity', 'service_type', 'by', 'order', 'q', 'date'
         ]);
 
 

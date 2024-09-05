@@ -122,6 +122,9 @@ class User extends Authenticatable
                     $query->where('is_registered', false);
                 }
             }
+        )->when(
+            $filters['date'] ?? false,
+            fn ($query, $value) => $query->whereDate('users.created_at', date('Y-m-d', strtotime($value)))
         );
     }
 

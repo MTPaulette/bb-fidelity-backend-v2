@@ -26,12 +26,12 @@ class LogActivityController extends Controller
         */
 
         $filters = $request->only([
-            'by', 'order', 'q'
+            'by', 'order', 'q', 'date'
         ]);
-        //$logs = LogActivity::filter($filters)->paginate(2);
-        $logs = LogActivity::join('users', 'users.id', '=', 'log_activities.user_id')
+
+        $logs = LogActivity::filter($filters)
+                                ->join('users', 'users.id', '=', 'log_activities.user_id')
                                 ->select('log_activities.*', 'users.name as user_name')
-                                ->filter($filters)
                                 ->paginate(10);
 
         if(sizeof($logs) == 0) {
