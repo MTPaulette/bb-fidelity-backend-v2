@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\CreatedService;
 
 class ServiceController extends Controller
 {
@@ -78,6 +80,12 @@ class ServiceController extends Controller
         ];
 
         \LogActivity::addToLog('New service created.<br/> Service name: '.$service->name);
+        
+        /*sending notification email when new service is created */
+        $admins = User::allAdmin()->get();
+        foreach($admins as $admin) {
+            $admin->notify(new CreatedService($service, $admin, $request->user()->name));
+        }
         return response($response, 201);
     }
 
