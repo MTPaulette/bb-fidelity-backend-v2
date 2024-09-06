@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\CreatedUser;
 
 class UserController extends Controller
 {
@@ -105,6 +106,13 @@ class UserController extends Controller
         ];
 
         \LogActivity::addToLog('New user created.<br/> User name: '.$user->name);
+
+        /*sending notification email */
+        $admins = User::allAdmin()->get();
+        $user->notify(new CreatedUser($user, $request->password, $user));
+        foreach($admins as $admin) {
+            $admin->notify(new CreatedUser($user, $request->password, $admin));
+        }
         return response($response, 201);
     }
 
