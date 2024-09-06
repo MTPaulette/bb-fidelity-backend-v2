@@ -61,6 +61,7 @@ class ServiceController extends Controller
         ]);
 
         if($validator->fails()){
+            \LogActivity::addToLog("Service creation failed.<br/> Error: ".$validator->errors());
             return response([
                 'errors' => $validator->errors(),
             ], 422);
@@ -76,7 +77,7 @@ class ServiceController extends Controller
             'message' => 'The service '.$service->name.' was successfully created',
         ];
 
-        \LogActivity::addToLog('New service created.<br/> Service ID: '.$service->id.'  Service name: '.$service->name);
+        \LogActivity::addToLog('New service created.<br/> Service name: '.$service->name);
         return response($response, 201);
     }
 
@@ -126,13 +127,14 @@ class ServiceController extends Controller
             'description' => 'required|string',
         ]);
 
+        $service = Service::findOrFail($request->id);
+    
         if($validator->fails()){
+            \LogActivity::addToLog("Service update failed.<br/> Service name: ".$service->name." | error: ".$validator->errors());
             return response([
                 'errors' => $validator->errors(),
             ], 422);
         }
-        
-        $service = Service::findOrFail($request->id);
 
         if($request->name) {
             if($request->name != $service->name) {
@@ -192,7 +194,7 @@ class ServiceController extends Controller
             'service' => $service,
             'message' => "Service successfully updated",
         ];
-        \LogActivity::addToLog("Service updated.<br/> Service ID: ".$service->id." | ".$messageLog);
+        \LogActivity::addToLog("Service updated.<br/>".$messageLog);
         return response($response, 201);
     }
 
@@ -205,36 +207,31 @@ class ServiceController extends Controller
     public function destroy(Request $request)
     {
         $user = $request->user();
+        $service = Service::findOrFail($request->id);
+
         if (! Hash::check($request->password, $user->password)) {
             $response = [
                 'password' => 'Wrong password.'
             ];
+            \LogActivity::addToLog("Service deletion failed.<br/> Service name: ".$service->name." | error: ".$response['password']);
             return response($response, 422);
         }
- 
-        $service = Service::find($request->id);
-        if($service) {
-            // check if the service has already been buy
-            if( $service->users()->exists() ) {
-                $response = [
-                    'error' => 'The service '.$service->name.' has already been purchased. You can not delete it',
-                ];
-                return response($response, 422);
-            } else {
-                $service->delete();
-                \LogActivity::addToLog('Service '.$service->name.' deleted');
-                $response = [
-                    'message' => "Service successfully deleted",
-                ];
-                return response($response, 201);
-            }
-        } else {
+
+        // check if the service has already been buy
+        if( $service->users()->exists() ) {
             $response = [
-                'errors' => 'Service not found',
+                'error' => 'The service '.$service->name.' has already been purchased. You can not delete it',
             ];
-            return response($response, 404);
+            \LogActivity::addToLog("Service deletion failed.<br/> Service name: ".$service->name." | Error: ".$response['error']);
+
+            return response($response, 422);
+        } else {
+            $service->delete();
+            \LogActivity::addToLog('Service '.$service->name.' deleted');
+            $response = [
+                'message' => "Service successfully deleted",
+            ];
+            return response($response, 201);
         }
-
-
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use Request;
-// use Illuminate\Http\Request;
 use App\Models\LogActivity as LogActivityModel;
 
 

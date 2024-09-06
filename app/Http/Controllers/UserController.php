@@ -81,6 +81,7 @@ class UserController extends Controller
         ]);
 
         if($validator->fails()){
+            \LogActivity::addToLog("User creation failed.<br/>".$validator->errors());
             return response([
                 'errors' => $validator->errors(),
             ], 500);
@@ -103,7 +104,7 @@ class UserController extends Controller
             'message' => 'The user '.$user->name.' account successfully created',
         ];
 
-        \LogActivity::addToLog('New user created.<br/>User ID: '.$user->id.'  User name: '.$user->name);
+        \LogActivity::addToLog('New user created.<br/> User name: '.$user->name);
         return response($response, 201);
     }
 
@@ -117,6 +118,8 @@ class UserController extends Controller
     {
         $messageLog = '';
         $new_balance = 0;
+        $user = User::findOrFail($request->id);
+
         $validator = Validator::make($request->all(),[
             'is_registered' => 'boolean',
             'point' => 'numeric|min:0',
@@ -124,12 +127,12 @@ class UserController extends Controller
         ]);
 
         if($validator->fails()){
+            \LogActivity::addToLog("User update failed.<br/> User name: ".$user->name."<br/>".$validator->errors());
             return response([
                 'errors' => $validator->errors(),
             ], 500);
         }
 
-        $user = User::findOrFail($request->id);
         if($request->has("point")) {
             if($request->malus) {
                 $new_balance = $user->balance - $request->point;
@@ -159,7 +162,7 @@ class UserController extends Controller
         $response = [
             'message' => "$user->name, 's informations updated.",
         ];
-        \LogActivity::addToLog("User's informations updated.<br/> User ID: ".$user->id."  User name: ".$user->name." ".$messageLog);
+        \LogActivity::addToLog("User updated.<br/> User name: ".$user->name." ".$messageLog);
         return response($response, 201);
     }
 

@@ -28,7 +28,8 @@ class AppServiceProvider extends ServiceProvider
             //return 'http://127.0.0.1:3000/reset-password?token='.$token;
 
             // in production mode
-           return 'https://fidelity.bbdesign.dev/reset-password?token='.$token;
+           //return 'https://fidelity.bbdesign.dev/reset-password?token='.$token;
+           return env('APP_FRONTEND_URL')."/reset-password?token={$token}";
         });
     }
 }

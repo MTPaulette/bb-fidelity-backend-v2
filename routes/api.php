@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\LogActivityController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\NotificationSeenController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PurchaseController;
@@ -34,10 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
     // Route::post("/reset",[PasswordController::class, "store"])->name("reset");
     Route::get('/user/{user_id}/services', [PurchaseController::class, 'allServicesOfUser'])->name('user.services.show');
-
-    /* notification's route */
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notification');
-    Route::get('/notification/{notification}/seen', NotificationSeenController::class)->name('notification.seen');
 });
 
 

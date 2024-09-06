@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\RegisteredUser;
 
-use Illuminate\Support\Facades\Notification;
-
 class PurchaseController extends Controller
 {
     /**
@@ -57,9 +55,11 @@ class PurchaseController extends Controller
 
         try {
             if($user->role_id != 2) {
-                return response([
+                $response = [
                     'errors' => "Only client can make purchase. not Admin",
-                ], 422);
+                ];
+                \LogActivity::addToLog("Purchase creation failed.<br/> Error: ".$response['errors']);
+                return response($response, 422);
             }
             if($by_cash) {
                 $payment_mode = 'by cash';
@@ -83,18 +83,22 @@ class PurchaseController extends Controller
 
             } else {
                 $payment_mode = 'by point';
-                if(!$user->is_registered) { 
-                    return response([
-                        'errors' => 'Only users registered with the loyalty program can make a payment by points.',
-                    ], 422);
+                if(!$user->is_registered) {
+                    $response = [
+                        'errors' => "Only users registered with the loyalty program can make a payment by points.",
+                    ];
+                    \LogActivity::addToLog("Purchase creation failed.<br/> Error: ".$response['errors']);
+                    return response($response, 422);
                 } else {
                     $new_balance = $user->balance - $service->debit;
 
                     // check if user cant pay service with his balance
                     if($new_balance < 0) {
-                        return response([
-                            'errors' => 'Your balance is insuffisant.',
-                        ], 422);
+                        $response = [
+                            'errors' => "Your balance is insuffisant..",
+                        ];
+                        \LogActivity::addToLog("Purchase creation failed.<br/> Error: ".$response['errors']);
+                        return response($response, 422);
                     } else {
                         $user->services()->attach($service, [
                             'by_cash' => false,
@@ -108,7 +112,6 @@ class PurchaseController extends Controller
             }
 
             \LogActivity::addToLog('New purchase created.<br/> User name: '.$user->name.', Service name: '.$service->name. ',<br/> Payment mode: '.$payment_mode.', Old user balance: '.$user->balance.', New user balance: '.$new_balance);
-            // return $new_balance;
             $user->balance = $new_balance;
             $user->save();
             
@@ -116,17 +119,18 @@ class PurchaseController extends Controller
                 $message = 'Purchase successfully saved.';
             }
 
-            $admins = User::allAdmin()->get();
             $response = [
                 'message' => $message.' The user new balance is '.$user->balance,
-                'admins' => $admins
             ];
 
+            /*sending notification email */
+            $admins = User::allAdmin()->get();
             if($new_registered_user) {
-                $user->notify(new RegisteredUser($user, $service));
-                Notification::sendNow($admins, new RegisteredUser($user, $service));
+                $user->notify(new RegisteredUser($user, $service, $user));
+                foreach($admins as $admin) {
+                    $admin->notify(new RegisteredUser($user, $service, $admin));
+                }
             }
-            // $user->notify(new SuccessfulPurchase($service));
             return response($response, 201);
 
         } catch (\Throwable $th) {

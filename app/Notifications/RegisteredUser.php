@@ -21,17 +21,18 @@ class RegisteredUser extends Notification
     public function __construct(
         private User $user,
         private Service $service,
+        private User $receiver,
     ) {}
 
     /**
-     * Get the notification's delivery channels.
+     * Get the notification"s delivery channels.
      *
      * @param  mixed  $notifiable
      * @return array
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ["mail"];
     }
 
     /**
@@ -40,45 +41,28 @@ class RegisteredUser extends Notification
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMaill($notifiable)
-    {
-        // $url = "https://fidelity.bbdesign.dev/historic";
-        $url = "http://127.0.0.1:3000/historic";
-        return (new MailMessage)
-                    ->greeting('Hello '.$this->user->name.' !')
-                    ->line('You are now registered with the loyalty program and can benefit from all the advantages usered by this program.')
-                    ->line('You are now able to make a payment by points.')
-                    ->action('See Your historic', $url)
-                    //->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
-                    ->line('Thank you for continuing to trust Brain-Booster!');
-    }
-
     public function toMail($notifiable)
     {
-        // $url = "https://fidelity.bbdesign.dev/historic";
-        $url = "http://127.0.0.1:3000/historic";
-        return (new MailMessage)
-                    ->greeting('Hello '.$this->user->name.' !')
-                    ->line('By subscribing to the service '.$this->service->name.', You have just joined our BB-Fidelity loyalty program.')
-                    ->line('You can benefit from all the advantages usered by this program. You are now able to make a payment by points.s')
-                    ->line('Your balance is now: '.$this->user->balance)
-                    ->action('See your historic', $url)
-                    //->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
-                    ->line('Thank you for continuing to trust Brain-Booster!');
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            'user_id' => $this->user->id,
-            'service_id' => $this->service->id,
-            'balance' => $this->user->balance,
-        ];
+        $historic_url = env('APP_FRONTEND_URL').'/historic';
+        $user_historic_url = env('APP_FRONTEND_URL')."/user/{$this->user->id}/history";
+    
+        if($this->receiver->role_id != 2) {
+            return (new MailMessage)
+                        ->greeting("Hello {$this->receiver->name} !")
+                        ->line("By subscribing to the service {$this->service->name}, The user {$this->user->name} has just integrated the BB-Fidelity loyalty program.")
+                        ->line("The user balance is now: {$this->user->balance} ")
+                        ->action("See the user's historic", $user_historic_url)
+                        // ->lineIf(auth()->user()->id, "Only for admin")
+                        //->error()
+                        ->line("Thank you for continuing to trust Brain-Booster!");
+        } else {
+            return (new MailMessage)
+                        ->greeting("Hello {$this->receiver->name} !")
+                        ->line("By subscribing to the service {$this->service->name}, You have just joined our BB-Fidelity loyalty program.")
+                        ->line("You can benefit from all the advantages usered by this program. You are now able to make a payment by points")
+                        ->line("Your balance is now: {$this->user->balance} ")
+                        ->action("See your historic", $historic_url)
+                        ->line("Thank you for continuing to trust Brain-Booster!");
+        }
     }
 }

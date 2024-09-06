@@ -36,6 +36,8 @@ class PasswordController extends Controller
 
             if($user->role_id == 1) {
                 $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+            } else if($user->role_id == 3) {
+                $token = $user->createToken('bb-fidelity-syst-token', ['admin', 'superadmin'])->plainTextToken;
             } else {
                 $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
             }
@@ -52,6 +54,7 @@ class PasswordController extends Controller
             $response = [
                 'errors' => 'Current Password does not match with Old Password',
             ];
+            \LogActivity::addToLog("User password update failed.<br/> User name: ".$user->name." | error: " .$response['errors']);
             return response($response, 500);
         }
     }
@@ -72,20 +75,7 @@ class PasswordController extends Controller
         $status = Password::sendResetLink(
             $request->only('email')
         );
-    
-        /* if($status == Password::RESET_LINK_SENT) {
-            $response = [
-                'message' => "Reset link sent to your email.",
-            ];
-            return response($response, 201);
-        } else {
-            $response = [
-                'errors' => "Failed to send reset link.",
-            ];
-            return response($response, 500);
-        } */
 
-        
         if($status == Password::RESET_LINK_SENT) {
         $response = [
             'message' => [__($status)],
