@@ -22,6 +22,8 @@ class PurchaseMade extends Notification
         private User $user,
         private Service $service,
         private User $receiver,
+        private bool $by_cash,
+        private float $new_balance,
     ) {}
 
     /**
@@ -49,18 +51,21 @@ class PurchaseMade extends Notification
         if($this->receiver->role_id != 2) {
             return (new MailMessage)
                         ->greeting("Hello {$this->receiver->name} !")
-                        ->line("By subscribing to the service {$this->service->name}, The user {$this->user->name} has just integrated the BB-Fidelity loyalty program.")
-                        ->line("The user balance is now: {$this->user->balance} ")
+                        ->line("The user {$this->user->name} has just subscribed to {$this->service->name} service at our {$this->service->agency} agency.")
+                        ->line("This service is valid for {$this->service->validity}.")
+                        ->lineIf($this->by_cash, "By a payment in cash, this service cost him {$this->service->price} Francs CFA. His balance has been credited with {$this->service->credit} point(s).")
+                        ->lineIf(!$this->by_cash, "By a payment by point, he has been debited with {$this->service->debit} point(s).")
+                        ->line("The user balance is now worth {$this->new_balance} point(s).")
                         ->action("See the user's historic", $user_historic_url)
-                        // ->lineIf(auth()->user()->id, "Only for admin")
-                        //->error()
                         ->line("Thank you for continuing to trust Brain-Booster!");
         } else {
             return (new MailMessage)
                         ->greeting("Hello {$this->receiver->name} !")
-                        ->line("By subscribing to the service {$this->service->name}, You have just joined our BB-Fidelity loyalty program.")
-                        ->line("You can benefit from all the advantages usered by this program. You are now able to make a payment by points")
-                        ->line("Your balance is now: {$this->user->balance} ")
+                        ->line("You have just subscribed to {$this->service->name} service at our {$this->service->agency} agency.")
+                        ->line("This service is valid for {$this->service->validity}.")
+                        ->lineIf($this->by_cash, "By a payment in cash, this service cost you {$this->service->price} Francs CFA. Your balance has been credited with {$this->service->credit} point(s).")
+                        ->lineIf(!$this->by_cash, "By a payment by point, you have been debited with {$this->service->debit} point(s).")
+                        ->line("Your balance is now worth {$this->new_balance} point(s).")
                         ->action("See your historic", $historic_url)
                         ->line("Thank you for continuing to trust Brain-Booster!");
         }

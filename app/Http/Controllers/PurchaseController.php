@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\RegisteredUser;
+use App\Notifications\PurchaseMade;
+use App\Notifications\PurchaseFailed;
 
 class PurchaseController extends Controller
 {
@@ -51,14 +53,21 @@ class PurchaseController extends Controller
         $new_balance = 0;
         $message = '';
         $payment_mode = '';
+        $admins = User::allAdmin()->get();
         //return gettype($service->debit);
 
         try {
             if($user->role_id != 2) {
                 $response = [
-                    'errors' => "Only client can make purchase. not Admin",
+                    'errors' => "Only client can make purchase. Not Admin",
                 ];
                 \LogActivity::addToLog("Purchase creation failed.<br/> Error: ".$response['errors']);
+
+                /* send notification for purchase failed */ 
+                $user->notify(new PurchaseFailed($user, $service, $user, $response['errors']));
+                foreach($admins as $admin) {
+                    $admin->notify(new PurchaseFailed($user, $service, $admin, $response['errors']));
+                }
                 return response($response, 422);
             }
             if($by_cash) {
@@ -88,6 +97,12 @@ class PurchaseController extends Controller
                         'errors' => "Only users registered with the loyalty program can make a payment by points.",
                     ];
                     \LogActivity::addToLog("Purchase creation failed.<br/> Error: ".$response['errors']);
+
+                    /* send notification for purchase failed */
+                    $user->notify(new PurchaseFailed($user, $service, $user, $response['errors']));
+                    foreach($admins as $admin) {
+                        $admin->notify(new PurchaseFailed($user, $service, $admin, $response['errors']));
+                    }
                     return response($response, 422);
                 } else {
                     $new_balance = $user->balance - $service->debit;
@@ -95,9 +110,16 @@ class PurchaseController extends Controller
                     // check if user cant pay service with his balance
                     if($new_balance < 0) {
                         $response = [
-                            'errors' => "Your balance is insuffisant..",
+                            'errors' => "The user balance is insuffisant.",
                         ];
                         \LogActivity::addToLog("Purchase creation failed.<br/> Error: ".$response['errors']);
+
+                        /* send notification for purchase failed */
+                        $user->notify(new PurchaseFailed($user, $service, $user, $response['errors']));
+                        foreach($admins as $admin) {
+                            $admin->notify(new PurchaseFailed($user, $service, $admin, $response['errors']));
+                        }
+            
                         return response($response, 422);
                     } else {
                         $user->services()->attach($service, [
@@ -123,14 +145,20 @@ class PurchaseController extends Controller
                 'message' => $message.' The user new balance is '.$user->balance,
             ];
 
-            /*sending notification email */
-            $admins = User::allAdmin()->get();
+            /*sending notification email when new registered user */
             if($new_registered_user) {
                 $user->notify(new RegisteredUser($user, $service, $user));
                 foreach($admins as $admin) {
                     $admin->notify(new RegisteredUser($user, $service, $admin));
                 }
             }
+
+            /* send notification for success purchase */
+            $user->notify(new PurchaseMade($user, $service, $user, $request->by_cash, $new_balance));
+            foreach($admins as $admin) {
+                $admin->notify(new PurchaseMade($user, $service, $admin, $request->by_cash, $new_balance));
+            }
+
             return response($response, 201);
 
         } catch (\Throwable $th) {
