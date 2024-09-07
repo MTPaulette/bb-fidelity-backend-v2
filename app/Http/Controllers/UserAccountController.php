@@ -39,12 +39,12 @@ class UserAccountController extends Controller
             $user->role_id = 1;
             $user->save();
 
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin'], now()->addMinutes(15))->plainTextToken;
         } else if($request->role_id == 3) {
             $user->role_id = 3;
             $user->save();
 
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin', 'superadmin'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin', 'superadmin'], now()->addMinutes(15))->plainTextToken;
         } else {
             $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
         }
@@ -80,9 +80,9 @@ class UserAccountController extends Controller
  
         // $user->tokens()->delete();
         if($user->role_id == 1) {
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin'], now()->addMinutes(15))->plainTextToken;
         } else if($user->role_id == 3) {
-            $token = $user->createToken('bb-fidelity-syst-token', ['admin', 'superadmin'])->plainTextToken;
+            $token = $user->createToken('bb-fidelity-syst-token', ['admin', 'superadmin'], now()->addMinutes(15))->plainTextToken;
         } else {
             $token = $user->createToken('bb-fidelity-syst-token', ['view-profile', 'view-historic'])->plainTextToken;
         }
