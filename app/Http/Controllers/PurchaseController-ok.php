@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use App\Notifications\RegisteredUser;
 use App\Notifications\PurchaseMade;
 use App\Notifications\PurchaseFailed;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class PurchaseController extends Controller
 {
@@ -28,7 +30,7 @@ class PurchaseController extends Controller
         ->join('users', 'purchases.user_id', '=', 'users.id')
         ->join('users as users_1', 'purchases.admin_id', '=', 'users_1.id')
         ->join('services', 'purchases.service_id', '=', 'services.id')
-        ->select('purchases.*', 'users.name as user_name', 'users.balance as user_current_balance', 'users_1.name as admin_name', 'services.name as service_name', 'services.price as price', 'services.validity as validity', 'services.agency as agency', 'services.service_type as service_type');
+        ->select('purchases.*', 'users.name as user_name', 'users_1.name as admin_name', 'services.name as service_name', 'services.price as price', 'services.validity as validity', 'services.agency as agency', 'services.service_type as service_type');
     }
 
     public function index(Request $request)
@@ -232,47 +234,20 @@ class PurchaseController extends Controller
      * @param $user_id
      * @return \Illuminate\Http\Response
      */
-    public function allServicesOfUser($user_id, Request $request)
+    public function allServicesOfUser($user_id)
     {
-        $filters = $request->only([
-            'agency', 'validity', 'service_type', 'by', 'order', 'q', 'date'
-        ]);
-
         $user = User::findOrFail($user_id);
+        //$user = User::userWithAdminAndRoleName()->findOrFail($user_id);
         if($user->services()->exists()) {
-            $purchases = $this->purchaseQuery()
-                            ->when(
-                                $filters['agency'] ?? false,
-                                fn ($query, $value) => $query->where('agency', '=', $value)
-                            )->when(
-                                $filters['validity'] ?? false,
-                                fn ($query, $value) => $query->where('validity', '=', $value)
-                            )->when(
-                                $filters['service_type'] ?? false,
-                                fn ($query, $value) => $query->where('service_type', '=', $value)
-                            )->when(
-                                $filters['by'] ?? false,
-                                fn ($query, $value) =>
-                                !in_array($value, $this->sortable)
-                                    ? $query :
-                                    $query->orderBy($value, $filters['order'] ?? 'asc')
-                            )->when(
-                                $filters['date'] ?? false,
-                                fn ($query, $value) => $query->whereDate('purchases.created_at', date('Y-m-d', strtotime($value)))
-                            )
-                            ->where('purchases.user_id', '=', $user_id)->paginate(25);
+            $user_services = $user->services()->orderBy('created_at', 'desc')->paginate(10);
 
-            if(sizeof($purchases) == 0) {
-                return response([
-                    'errors' => 'No result.',
-                ], 422);
-            } else {
-                $response = [
-                    'purchases' => $purchases,
-                    'user_name' => $user->name
-                ];
-                return response($response, 201);
+            foreach ($user_services as $s) {
+                $s["user_name"] = $user->name;
             }
+            $response = [
+                'services' => (Object) $user_services,
+            ];
+            return response($response, 201);
         } else {
             return response([
                 'errors' =>  'The user '.$user->name.' has not yet made a purchase of services.',
@@ -280,58 +255,74 @@ class PurchaseController extends Controller
         }
     }
 
-
     /**
      * Display all user of the specified purchase.
      *
      * @param $service_id
      * @return \Illuminate\Http\Response
      */
+    public function allUsersOfServicee($service_id)
+    {
+        $service = Service::findOrFail($service_id);
+        if( $service->users()->exists() ) {
+            $service_users = $service->users()->orderBy('created_at', 'desc')->paginate(10);
+            
+            foreach ($service_users as $s) {
+                $s["service_name"] = $service->name;
+            }
+            $response = [
+                'users' => (Object) $service_users,
+            ];
+            return response($response, 201);
+        } else {
+            return response([
+                'errors' => 'The service '.$service->name.' has not been purchased by any user.',
+            ], 422);
+        }
+    }
     public function allUsersOfService($service_id, Request $request)
     {
         $filters = $request->only([
             'agency', 'validity', 'service_type', 'by', 'order', 'q', 'date'
         ]);
 
-        $service = Service::findOrFail($service_id);
-        if( $service->users()->exists() ) {
-            $purchases = $this->purchaseQuery()
-                            ->when(
-                                $filters['agency'] ?? false,
-                                fn ($query, $value) => $query->where('agency', '=', $value)
-                            )->when(
-                                $filters['validity'] ?? false,
-                                fn ($query, $value) => $query->where('validity', '=', $value)
-                            )->when(
-                                $filters['service_type'] ?? false,
-                                fn ($query, $value) => $query->where('service_type', '=', $value)
-                            )->when(
-                                $filters['by'] ?? false,
-                                fn ($query, $value) =>
-                                !in_array($value, $this->sortable)
-                                    ? $query :
-                                    $query->orderBy($value, $filters['order'] ?? 'asc')
-                            )->when(
-                                $filters['date'] ?? false,
-                                fn ($query, $value) => $query->whereDate('purchases.created_at', date('Y-m-d', strtotime($value)))
-                            )
-                            ->where('purchases.service_id', '=', $service_id)->paginate(25);
+        //return $filters;
+        $purchases = $this->purchaseQuery()
+                        ->when(
+                            $filters['agency'] ?? false,
+                            fn ($query, $value) => $query->where('agency', '=', $value)
+                        )->when(
+                            $filters['validity'] ?? false,
+                            fn ($query, $value) => $query->where('validity', '=', $value)
+                        )->when(
+                            $filters['service_type'] ?? false,
+                            fn ($query, $value) => $query->where('service_type', '=', $value)
+                        )->when(
+                            $filters['by'] ?? false,
+                            fn ($query, $value) =>
+                            !in_array($value, $this->sortable)
+                                ? $query :
+                                $query->orderBy($value, $filters['order'] ?? 'asc')
+                        )
+                        ->when(
+                            $filters['q'] ?? false,
+                            fn ($query, $value) => $query->where('users.name', 'LIKE', "%{$value}%")
+                                                        ->orWhere('services.name', 'LIKE', "%{$value}%")
+                        )->when(
+                            $filters['date'] ?? false,
+                            fn ($query, $value) => $query->whereDate('purchases.created_at', date('Y-m-d', strtotime($value)))
+                        )
+                        ->where('purchases.service_id', '=', $service_id)->paginate(25);
 
-            if(sizeof($purchases) == 0) {
-                return response([
-                    'errors' => 'No result.',
-                ], 422);
-            } else {
-                $response = [
-                    'purchases' => $purchases,
-                    'service_name' => $service->name
-                ];
-                return response($response, 201);
-            }
-        } else {
+        if(sizeof($purchases) == 0) {
             return response([
-                'errors' => 'The service '.$service->name.' has not been purchased by any user.',
+                'errors' => 'No result.',
             ], 422);
+        } else {
+            $response = [
+                'purchases' => $purchases,
+            ];
+            return response($response, 201);
         }
     }
 

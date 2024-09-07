@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\CreatedUser;
+use App\Notifications\DeletedUser;
 
 class UserController extends Controller
 {
@@ -20,10 +21,12 @@ class UserController extends Controller
         $filters = $request->only([
             'by', 'order', 'q', 'is_registered', 'date'
         ]);
+
+        $users_query = User::filter($filters)->userWithAdminAndRoleName();
         if($request->has('no_pagination')) {
-            $users =  User::filter($filters)->get();
+            $users =  $users_query->get();
         } else {
-            $users = User::filter($filters)->paginate(10);
+            $users = $users_query->paginate(10);
         }
         
         if(sizeof($users) == 0) {
@@ -47,7 +50,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::userWithAdminAndRoleName()->findOrFail($id);
+        //$user = User::findOrFail($id);
         $response = [
             'user' => $user,
         ];
@@ -144,7 +148,7 @@ class UserController extends Controller
         if($request->has("point")) {
             if($request->malus) {
                 $new_balance = $user->balance - $request->point;
-                if($user->balance < 0) {
+                if($new_balance < 0) {
                     $new_balance = 0;
                 }
             }   else {
@@ -218,6 +222,11 @@ class UserController extends Controller
                 'message' => "User successfully deleted",
             ];
 
+            /*sending notification email when user is deleted */
+            $admins = User::allAdmin()->get();
+            foreach($admins as $admin) {
+                $admin->notify(new DeletedUser($user->name, $admin, $request->user()->name));
+            }
             \LogActivity::addToLog('User '.$user->name.' deleted');
             return response($response, 201);
         }

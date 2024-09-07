@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CreatedService extends Notification
+class DeletedUser extends Notification
 {
     use Queueable;
 
@@ -19,7 +19,7 @@ class CreatedService extends Notification
      * @return void
      */
     public function __construct(
-        private Service $service,
+        private string $deleted_user_name,
         private User $receiver,
         private string $user_name,
     ) {}
@@ -43,13 +43,12 @@ class CreatedService extends Notification
      */
     public function toMail($notifiable)
     {
-        $services_url = env('APP_FRONTEND_URL')."/service/{$this->service->id}";
+        $services_url = env('APP_FRONTEND_URL')."/users";
 
         return (new MailMessage)
                     ->greeting("Hello {$this->receiver->name} !")
-                    ->line("The service {$this->service->name} has just been created by {$this->user_name}.")
-                    ->line("This service is worth {$this->service->price} Francs CFA, of the type {$this->service->service_type}, valid for {$this->service->validity} available at {$this->service->agency} agency and whose the credit is {$this->service->credit} and the debit is {$this->service->debit}.")
-                    ->action("View the service", $services_url)
+                    ->line("The user {$this->deleted_user_name} has just been deleted by {$this->user_name}.")
+                    ->action("View all services", $services_url)
                     ->line("Thank you for continuing to trust Brain-Booster!");
     }
 }

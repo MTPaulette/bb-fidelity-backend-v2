@@ -102,7 +102,7 @@ class User extends Authenticatable
                 $query->orderBy($value, $filters['order'] ?? 'asc')
         )->when(
             $filters['q'] ?? false,
-            fn ($query, $value) => $query->where('name', 'LIKE', "%{$value}%")
+            fn ($query, $value) => $query->where('users.name', 'LIKE', "%{$value}%")
         )->when($filters['is_registered'] ?? false, function ($query, $value) {
                 if($value == 'true') {
                     $query->where('is_registered', true);
@@ -117,5 +117,11 @@ class User extends Authenticatable
         );
     }
 
+    public function scopeUserWithAdminAndRoleName(Builder $query): Builder
+    {
+        return $query->join('roles', 'users.role_id', '=', 'roles.id')
+                    ->join('users as users_1', 'users.user_id', '=', 'users_1.id')
+                    ->select('users.*', 'roles.name as role_name', 'users_1.name as user_name');
+    }
 }
 

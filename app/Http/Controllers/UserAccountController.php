@@ -146,7 +146,8 @@ class UserAccountController extends Controller
      */
     public function show(Request $request)
     {
-        $user = $request->user();
+        //$user = $request->user();
+        $user = User::userWithAdminAndRoleName()->findOrFail($request->user()->id);
         $response = [
             'user' => $user,
         ];

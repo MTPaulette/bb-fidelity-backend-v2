@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\CreatedService;
+use App\Notifications\DeletedService;
 
 class ServiceController extends Controller
 {
@@ -24,10 +25,12 @@ class ServiceController extends Controller
         ]);
 
 
+        $services_query = Service::filter($filters)->serviceWithAdminName();
+
         if($request->has('no_pagination')) {
-            $services = Service::filter($filters)->get();
+            $services = $services_query->get();
         } else {
-            $services = Service::filter($filters)->paginate(20);
+            $services = $services_query->paginate(20);
         }
         
         if(sizeof($services) == 0) {
@@ -79,7 +82,7 @@ class ServiceController extends Controller
             'message' => 'The service '.$service->name.' was successfully created',
         ];
 
-        \LogActivity::addToLog('New service created.<br/> Service name: '.$service->name);
+        \LogActivity::addToLog("New service created.<br/> Service name: {$service->name} | Type of service: {$service->service_type} | Price: {$service->price} <br/>Agency: {$service->agency} | Validity: {$service->validity} | Credit: {$service->credit} | Debit: {$service->debit}.");
         
         /*sending notification email when new service is created */
         $admins = User::allAdmin()->get();
@@ -97,7 +100,7 @@ class ServiceController extends Controller
      */
     public function show($id)
     {
-        $service = Service::findOrFail($id);
+        $service = Service::serviceWithAdminName()->findOrFail($id);
         $response = [
             'service' => $service,
         ];
@@ -235,6 +238,11 @@ class ServiceController extends Controller
             return response($response, 422);
         } else {
             $service->delete();
+            /*sending notification email when new service is deleted */
+            $admins = User::allAdmin()->get();
+            foreach($admins as $admin) {
+                $admin->notify(new DeletedService($service, $admin, $request->user()->name));
+            }
             \LogActivity::addToLog('Service '.$service->name.' deleted');
             $response = [
                 'message' => "Service successfully deleted",

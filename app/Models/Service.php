@@ -24,7 +24,7 @@ class Service extends Model
     ];
     
     protected $sortable = [
-        'name', 'created_at'
+        'admin_name', 'agency', 'created_at', 'credit', 'debit', 'name', 'price', 'validity'
     ];
     // public function getBbPointAttribute() {
     //     return $this->price/100;
@@ -43,12 +43,12 @@ class Service extends Model
 
     public function scopeAlphabetical(Builder $query): Builder
     {
-        return $query->orderBy('name', 'asc');
+        return $query->orderBy('services.name', 'asc');
     }
     
     public function scopeMostRecent(Builder $query): Builder
     {
-        return $query->orderByDesc('created_at');
+        return $query->orderByDesc('services.created_at');
     }
 
     public function scopeFilter(Builder $query, array $filters): Builder
@@ -71,10 +71,16 @@ class Service extends Model
         )
         ->when(
             $filters['q'] ?? false,
-            fn ($query, $value) => $query->where('name', 'LIKE', "%{$value}%")
+            fn ($query, $value) => $query->where('services.name', 'LIKE', "%{$value}%")
         )->when(
             $filters['date'] ?? false,
             fn ($query, $value) => $query->whereDate('services.created_at', date('Y-m-d', strtotime($value)))
         );
+    }
+
+    public function scopeServiceWithAdminName(Builder $query): Builder
+    {
+        return $query->join('users', 'users.id', '=', 'services.user_id')
+                    ->select('services.*', 'users.name as user_name');
     }
 }
